@@ -9,10 +9,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PeriodBeetwinDto {
+public class CorrelationDto {
+	
 	String[] indexes;
-    TimeType type;
-    int quantity;
-	LocalDate from;
-    LocalDate to;
+	LocalDate fromDate;
+	LocalDate To;
 }
