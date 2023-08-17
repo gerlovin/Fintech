@@ -3,8 +3,8 @@ package telran.java47.communication.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import lombok.RequiredArgsConstructor;
 import telran.java47.communication.dto.AllApyIncomeDto;
@@ -26,6 +26,7 @@ import telran.java47.fintech.dao.StockRepository;
 public class CommunicationServiceImpl implements CommunicationService {
 	
 	final StockRepository stockRepository;
+	final RestTemplate restTemplate = new RestTemplate();
 
 	@Override
 	public TimeHistoryLimitsForIndexDto findTimeLimitsById(String id) {
@@ -36,8 +37,9 @@ public class CommunicationServiceImpl implements CommunicationService {
 	}
 
 	@Override
-	public String[] getAllIndexes() {
-		// TODO Auto-generated method stub
+	public String[] getAllIndexes() {	 
+
+	    String[] Indexes = restTemplate.getForObject("http://jsonplaceholder.typicode.com/posts?_limit=10", String.class);
 		return null;
 	}
 
