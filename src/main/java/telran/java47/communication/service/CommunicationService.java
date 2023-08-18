@@ -18,7 +18,7 @@ import telran.java47.communication.dto.ValueCloseBeetwinDto;
 public interface CommunicationService {
 	
 		
-	TimeHistoryLimitsForIndexDto findTimeLimitsById(String id);
+	TimeHistoryLimitsForIndexDto findTimeLimitsById(String id) throws Exception, InterruptedException;
 
 	String[] getAllIndexes();
 

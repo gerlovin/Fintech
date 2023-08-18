@@ -26,13 +26,13 @@ import telran.java47.communication.service.CommunicationService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("")
+//@RequestMapping("")
 public class CommunicationController {
 
 	final CommunicationService comunicationService;
 	
 	@GetMapping("/parser/{id}")
-	public TimeHistoryLimitsForIndexDto findPostById(@PathVariable String id) {
+	public TimeHistoryLimitsForIndexDto findTimeLimitsForId(@PathVariable String id) throws InterruptedException, Exception {
 		return comunicationService.findTimeLimitsById(id);
 	}
 	@GetMapping("/index")
@@ -75,7 +75,7 @@ public class CommunicationController {
 	public double prediction(@PathVariable String id) {
 		return comunicationService.prediction(id);
 	}
-	@PostMapping("/index/sum")
+	@PostMapping("/parser")
 	public List<ParsedInfoDto> parsing(@RequestBody ParserRequestForYahooDto parserRequestForYahooDto) {
 		return comunicationService.parsing(parserRequestForYahooDto);
 	}
