@@ -31,6 +31,11 @@ public class CommunicationController {
 
 	final CommunicationService communicationService;
 	
+	@GetMapping("/parser/{id}")
+	public TimeHistoryLimitsForIndexDto findTimeLimitsForId(@PathVariable String id) throws InterruptedException, Exception {
+		return comunicationService.findTimeLimitsById(id);
+	}
+	@GetMapping("/index")
 	//Committed by Livshits because there was a mistake
 //	@GetMapping("/parser/{id}")
 //	public TimeHistoryLimitsForIndexDto findPostById(@PathVariable String id) {
@@ -75,6 +80,9 @@ public class CommunicationController {
 	public double prediction(@PathVariable String id) {
 		return communicationService.prediction(id);
 	}
+	@PostMapping("/parser")
+	public List<ParsedInfoDto> parsing(@RequestBody ParserRequestForYahooDto parserRequestForYahooDto) {
+		return comunicationService.parsing(parserRequestForYahooDto);
 	/*
 	 * @PostMapping("/index/sum") public List<ParsedInfoDto> parsing(@RequestBody
 	 * ParserRequestForYahooDto parserRequestForYahooDto) { return
