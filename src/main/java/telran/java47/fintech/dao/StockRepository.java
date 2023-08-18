@@ -8,5 +8,5 @@ import telran.java47.fintech.model.StockKey;
 
 public interface StockRepository extends JpaRepository<Stock, StockKey> {
 	
-	TimeHistoryLimitsForIndexDto timeLimits(String id);
+//	TimeHistoryLimitsForIndexDto timeLimits(String id);
 }

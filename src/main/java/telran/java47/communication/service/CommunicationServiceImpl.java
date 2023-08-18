@@ -3,6 +3,7 @@ package telran.java47.communication.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -11,6 +12,7 @@ import telran.java47.communication.dto.AllApyIncomeDto;
 import telran.java47.communication.dto.ApyIncomDto;
 import telran.java47.communication.dto.CalcSumPackageDto;
 import telran.java47.communication.dto.CorrelationDto;
+import telran.java47.communication.dto.EarlestTimestampDto;
 import telran.java47.communication.dto.IrrIncomeDto;
 import telran.java47.communication.dto.ParsedInfoDto;
 import telran.java47.communication.dto.ParserRequestForYahooDto;
@@ -20,27 +22,88 @@ import telran.java47.communication.dto.TimeHistoryLimitsForIndexDto;
 import telran.java47.communication.dto.ValueCloseBeetwinDto;
 import telran.java47.fintech.dao.StockRepository;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.StreamingHttpOutputMessage.Body;
+import org.springframework.web.util.UriComponentsBuilder;
+
 
 @Service
 @RequiredArgsConstructor
 public class CommunicationServiceImpl implements CommunicationService {
 	
 	final StockRepository stockRepository;
-	final RestTemplate restTemplate = new RestTemplate();
+	static final RestTemplate restTemplate = new RestTemplate();
+	static final String BASE_URL ="https://api.twelvedata.com";
+	static final String API_KEY = "b4130a696aff4fa0b4e71c0400ded3b0";
 
 	@Override
-	public TimeHistoryLimitsForIndexDto findTimeLimitsById(String id) {
-		// TODO Auto-generated method stub
-		TimeHistoryLimitsForIndexDto result=null;
+	public TimeHistoryLimitsForIndexDto findTimeLimitsById(String id) throws Exception, InterruptedException {
+//		HttpRequest request = HttpRequest.newBuilder()
+//				.uri(URI.create("https://api.twelvedata.com/earliest_timestamp?symbol=" + id + "&interval=1day&outputsize=30&apikey=" + API_KEY))
+//				.header("X-RapidAPI-Key", API_KEY)
+//				.header("X-RapidAPI-Host", BASE_URL)
+//				.method("GET", HttpRequest.BodyPublishers.noBody())
+//				.build();
+//		HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+//		System.out.println(response.body());
+		URI uri = URI.create("https://api.twelvedata.com/earliest_timestamp?symbol=" + id + "&interval=1day&outputsize=30&apikey=" + API_KEY);
+		HttpHeaders headers = new HttpHeaders();
+//		headers.add("X-RapidAPI-Key", "324c69fb60msh93f7cf5cb241a94p12eb0bjsn5863365f3ef9");
+//	    headers.add("X-RapidAPI-Host", "twelve-data1.p.rapidapi.com");
+		RequestEntity<String> request = new RequestEntity<>(HttpMethod.GET, uri);
+		ResponseEntity<EarlestTimestampDto> response = restTemplate.exchange(request,EarlestTimestampDto.class);	
+		System.out.println(response.getBody().getDatetime());
+		TimeHistoryLimitsForIndexDto result= new TimeHistoryLimitsForIndexDto();
+		result.setSource(id);
+		result.setToData(LocalDate.now());
+		result.setFromData(response.getBody().getDatetime());
 		return result;
 		
 	}
-
+//	static RestTemplate restTemplate = new RestTemplate();
+//	static final String BASE_URL = "https://api.apilayer.com/fixer/convert"
+//	static final String API_KEY = "gHBm67EZiz0YuSFtzNLmM3VIUEDa74t6";
+//	
+//	public static void main(String[] args) throws URISyntaxException, IOException {
+//		
+//		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+//		System.out.println("Enter currency from:");
+//		String from = br.readLine().trim();
+//		System.out.println("Enter currency to:");
+//		String to = br.readLine().trim();
+//		System.out.println("Enter sum:");
+//		double sum = Double.parseDouble(br.readLine().trim());
+//		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
+//				.queryParam("from", from)
+//				.queryParam("to", to)
+//				.queryParam("amount", sum);
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.add("apikey", API_KEY);
+//		RequestEntity<String> request = new RequestEntity<>(headers, HttpMethod.GET, builder.build().toUri());
+//		ResponseEntity<RatesDto> response = restTemplate.exchange(request, RatesDto.class);	
+//		System.out.println("Date = " + response.getBody().getDate());
+//		System.out.println("Result = " + response.getBody().getResult());
+//	}
 	@Override
 	public String[] getAllIndexes() {	 
-
-	    String[] Indexes = restTemplate.getForObject("http://jsonplaceholder.typicode.com/posts?_limit=10", String.class);
-		return null;
+		URI uri = URI.create("https://twelve-data1.p.rapidapi.com/stocks?exchange=NASDAQ&format=json");
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("X-RapidAPI-Key", "324c69fb60msh93f7cf5cb241a94p12eb0bjsn5863365f3ef9");
+	    headers.add("X-RapidAPI-Host", "twelve-data1.p.rapidapi.com");
+		RequestEntity<String> request = new RequestEntity<>(headers, HttpMethod.GET, uri);
+		ResponseEntity<String> response = restTemplate.exchange(request, String.class);	
+		System.out.println(response);
+		return null; 
 	}
 
 	@Override

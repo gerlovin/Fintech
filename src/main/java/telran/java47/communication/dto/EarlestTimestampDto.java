@@ -5,14 +5,11 @@ import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class TimeHistoryLimitsForIndexDto {
-	String source;
-	LocalDate fromData;
-	LocalDate toData;
+@AllArgsConstructor
+public class EarlestTimestampDto {
+	LocalDate datetime;
+	LocalDate unix_time;
 }
