@@ -1,6 +1,7 @@
 package telran.java47.communication.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.http.HttpMethod;
@@ -19,6 +20,7 @@ import telran.java47.communication.dto.ParserRequestForYahooDto;
 import telran.java47.communication.dto.PeriodBeetwinDto;
 import telran.java47.communication.dto.PeriodBeetwinIfoDto;
 import telran.java47.communication.dto.TimeHistoryLimitsForIndexDto;
+import telran.java47.communication.dto.TwelveDataSymbolListDto;
 import telran.java47.communication.dto.ValueCloseBeetwinDto;
 import telran.java47.fintech.dao.StockRepository;
 
@@ -96,14 +98,12 @@ public class CommunicationServiceImpl implements CommunicationService {
 //	}
 	@Override
 	public String[] getAllIndexes() {	 
-		URI uri = URI.create("https://twelve-data1.p.rapidapi.com/stocks?exchange=NASDAQ&format=json");
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("X-RapidAPI-Key", "324c69fb60msh93f7cf5cb241a94p12eb0bjsn5863365f3ef9");
-	    headers.add("X-RapidAPI-Host", "twelve-data1.p.rapidapi.com");
-		RequestEntity<String> request = new RequestEntity<>(headers, HttpMethod.GET, uri);
-		ResponseEntity<String> response = restTemplate.exchange(request, String.class);	
-		System.out.println(response);
-		return null; 
+		URI uri = URI.create("https://api.twelvedata.com/stocks?exchange=NASDAQ&apikey=" + API_KEY);
+		RequestEntity<String> request = new RequestEntity<>(HttpMethod.GET, uri);
+		ResponseEntity<TwelveDataSymbolListDto> response = restTemplate.exchange(request, TwelveDataSymbolListDto.class);	
+		return Arrays.stream(response.getBody().getData())
+				.map(s -> s.getSymbol())
+				.toArray(String[]::new);
 	}
 
 	@Override
