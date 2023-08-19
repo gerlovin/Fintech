@@ -35,7 +35,7 @@ public class CommunicationController {
 	public TimeHistoryLimitsForIndexDto findTimeLimitsForId(@PathVariable String id) throws InterruptedException, Exception {
 		return comunicationService.findTimeLimitsById(id);
 	}
-	@GetMapping("/index")
+	@GetMapping("communication/index")
 	public String[] getAllIndexes() {
 		return comunicationService.getAllIndexes();
 	}
