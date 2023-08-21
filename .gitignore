@@ -3,6 +3,9 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+target/classes/META-INF/maven/telran.java47/fintech/pom.xml
+target/classes/META-INF/maven/telran.java47/fintech/pom.properties
+pom.xml
 
 ### STS ###
 .apt_generated
