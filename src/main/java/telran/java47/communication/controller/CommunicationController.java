@@ -31,10 +31,12 @@ public class CommunicationController {
 
 	final CommunicationService communicationService;
 	
-	//@GetMapping("/parser/{id}")
-	//public TimeHistoryLimitsForIndexDto findPostById(@PathVariable String id) {
-	//	return communicationService.findTimeLimitsById(id);
-	//}
+	//Committed by Livshits because there was a mistake
+//	@GetMapping("/parser/{id}")
+//	public TimeHistoryLimitsForIndexDto findPostById(@PathVariable String id) {
+//		return communicationService.findTimeLimitsById(id);
+//	}
+	
 	@GetMapping("communication/index")
 	public String[] getAllIndexes() {
 		return communicationService.getAllIndexes();
