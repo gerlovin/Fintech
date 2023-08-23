@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
+
 public class TimeHistoryLimitsForIndexDto {
 	String source;
 	LocalDate fromData;
