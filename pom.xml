@@ -26,13 +26,7 @@
 			<artifactId>modelmapper</artifactId>
 			<version>3.0.0</version>
 		</dependency>
-<<<<<<< Updated upstream
-=======
-		<!--dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency-->
->>>>>>> Stashed changes
+
 		<dependency>
 			<groupId>
 				org.springframework.boot</groupId>
