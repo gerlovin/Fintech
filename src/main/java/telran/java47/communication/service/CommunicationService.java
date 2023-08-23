@@ -41,6 +41,10 @@ public interface CommunicationService {
 	double prediction(String id);
 
 	List<ParsedInfoDto> parsing(ParserRequestForYahooDto parserRequestForYahooDto);
+	
+	TimeHistoryLimitsForIndexDto findTimeLimitsByIdInDB(String id);
+	
+	int testReq(String name);
 
 	
 }
