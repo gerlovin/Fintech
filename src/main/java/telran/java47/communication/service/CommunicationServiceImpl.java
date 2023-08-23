@@ -23,6 +23,7 @@ import telran.java47.communication.dto.TimeHistoryLimitsForIndexDto;
 import telran.java47.communication.dto.TwelveDataSymbolListDto;
 import telran.java47.communication.dto.ValueCloseBeetwinDto;
 import telran.java47.fintech.dao.StockRepository;
+import telran.java47.fintech.model.TimeHistoryLimitsForIndex;
 
 import java.io.IOException;
 import java.net.URI;
@@ -165,5 +166,19 @@ public class CommunicationServiceImpl implements CommunicationService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public TimeHistoryLimitsForIndexDto findTimeLimitsByIdInDB(String id) {
+		TimeHistoryLimitsForIndex tIndex = stockRepository.timeLimits(id);
+		return new TimeHistoryLimitsForIndexDto(id, tIndex.getFromData(), tIndex.getToData());
+	}
+
+	@Override
+	public int testReq(String name) {
+		// TODO Auto-generated method stub
+		return stockRepository.countByStockKeyName(name);
+	}
+
+
 
 }

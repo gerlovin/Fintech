@@ -29,54 +29,69 @@ import telran.java47.communication.service.CommunicationService;
 //@RequestMapping("")
 public class CommunicationController {
 
-	final CommunicationService comunicationService;
+	final CommunicationService communicationService;
 	
 	@GetMapping("/parser/{id}")
+<<<<<<< Updated upstream
 	public TimeHistoryLimitsForIndexDto findTimeLimitsForId(@PathVariable String id) throws InterruptedException, Exception {
 		return comunicationService.findTimeLimitsById(id);
+=======
+	public TimeHistoryLimitsForIndexDto findPostById(@PathVariable String id) {
+		return communicationService.findTimeLimitsById(id);
 	}
 	@GetMapping("communication/index")
 	public String[] getAllIndexes() {
-		return comunicationService.getAllIndexes();
+		return communicationService.getAllIndexes();
 	}
 	@PostMapping("/index")
 	public PeriodBeetwinIfoDto periodBeetwin(@RequestBody PeriodBeetwinDto periodBeetwinDto) {
-		return comunicationService.periodBeetwin(periodBeetwinDto);
+		return communicationService.periodBeetwin(periodBeetwinDto);
 	}
 	@PostMapping("/communication/data")
 	public ArrayList<ValueCloseBeetwinDto> valueCloseBeetwin(@RequestBody PeriodBeetwinDto periodBeetwinDto) {
-		return comunicationService.valueCloseBeetwin(periodBeetwinDto);
+		return communicationService.valueCloseBeetwin(periodBeetwinDto);
 	}
 	@PostMapping("/index/sum")
 	public PeriodBeetwinIfoDto calcSumPackage(@RequestBody CalcSumPackageDto calcSumPackageDto) {
-		return comunicationService.calcSumPackage(calcSumPackageDto);
+		return communicationService.calcSumPackage(calcSumPackageDto);
 	}
 	@PostMapping("/communication/index/apy")
 	public ApyIncomDto calcIncomApy(@RequestBody PeriodBeetwinDto periodBeetwinDto) {
-		return comunicationService.calcIncomeApy(periodBeetwinDto);
+		return communicationService.calcIncomeApy(periodBeetwinDto);
 	}
 	@PostMapping("/communication/index/apy_all")
 	public AllApyIncomeDto calcIncomAllApy(@RequestBody PeriodBeetwinDto periodBeetwinDto) {
-		return comunicationService.calcIncomeAllApy(periodBeetwinDto);
+		return communicationService.calcIncomeAllApy(periodBeetwinDto);
 	}
 	@PostMapping("/indexIrr")
 	public ArrayList<IrrIncomeDto> calcIncomIrr(@RequestBody PeriodBeetwinDto periodBeetwinDto) {
-		return comunicationService.calcIncomeIrr(periodBeetwinDto);
+		return communicationService.calcIncomeIrr(periodBeetwinDto);
 	}
 	@PostMapping("/communication/index/correlation")
 	public String /*ENUM*/ correlation(@RequestBody CorrelationDto correlationDto) {
-		return comunicationService.correlation(correlationDto);
+		return communicationService.correlation(correlationDto);
 	}
 	@DeleteMapping("/index{id}")
 	public boolean deleteAllHistoryForCompany(@PathVariable String id) {
-		return comunicationService.deleteAllHistoryForCompany(id);
+		return communicationService.deleteAllHistoryForCompany(id);
 	}
 	@GetMapping("/communication/index/prediction/{id}")
 	public double prediction(@PathVariable String id) {
-		return comunicationService.prediction(id);
+		return communicationService.prediction(id);
 	}
-	@PostMapping("/parser")
-	public List<ParsedInfoDto> parsing(@RequestBody ParserRequestForYahooDto parserRequestForYahooDto) {
-		return comunicationService.parsing(parserRequestForYahooDto);
+	/*
+	 * @PostMapping("/index/sum") public List<ParsedInfoDto> parsing(@RequestBody
+	 * ParserRequestForYahooDto parserRequestForYahooDto) { return
+	 * communicationService.parsing(parserRequestForYahooDto); }
+	 */
+	
+	@GetMapping("/communication/index/{id}")
+	public TimeHistoryLimitsForIndexDto timeHistoryLimitsForIndexInDB(@PathVariable String id) {
+		return communicationService.findTimeLimitsByIdInDB(id);
+	}
+	
+	@GetMapping("/communication/test")
+	public int testReq() {
+		return communicationService.testReq("GOLD");
 	}
 }
