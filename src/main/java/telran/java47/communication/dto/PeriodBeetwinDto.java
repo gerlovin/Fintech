@@ -9,15 +9,17 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 @Builder
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class PeriodBeetwinDto {
 	String[] indexes;
-    TimeType type;
+    String type;
     int quantity;
 	LocalDate from;
     LocalDate to;

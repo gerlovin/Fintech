@@ -22,7 +22,7 @@ public interface CommunicationService {
 
 	String[] getAllIndexes();
 
-	PeriodBeetwinIfoDto periodBeetwin(PeriodBeetwinDto periodBeetwinDto); 
+	List<PeriodBeetwinIfoDto> periodBeetwin(PeriodBeetwinDto periodBeetwinDto); 
 
 	ArrayList<ValueCloseBeetwinDto> valueCloseBeetwin(PeriodBeetwinDto periodBeetwinDto);
 
@@ -44,7 +44,7 @@ public interface CommunicationService {
 	
 	TimeHistoryLimitsForIndexDto findTimeLimitsByIdInDB(String id);
 	
-	int testReq(String name);
+	Integer testReq(String name);
 
 	
 }
