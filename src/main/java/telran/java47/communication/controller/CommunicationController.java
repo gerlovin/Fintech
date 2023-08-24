@@ -41,10 +41,8 @@ public class CommunicationController {
 	public String[] getAllIndexes() {
 		return communicationService.getAllIndexes();
 	}
-	@PostMapping("/index")
-	public PeriodBeetwinIfoDto periodBeetwin(@RequestBody PeriodBeetwinDto periodBeetwinDto) {
-		return communicationService.periodBeetwin(periodBeetwinDto);
-	}
+	
+
 	@PostMapping("/communication/data")
 	public ArrayList<ValueCloseBeetwinDto> valueCloseBeetwin(@RequestBody PeriodBeetwinDto periodBeetwinDto) {
 		return communicationService.valueCloseBeetwin(periodBeetwinDto);
@@ -89,7 +87,13 @@ public class CommunicationController {
 	}
 	
 	@GetMapping("/communication/test")
-	public int testReq() {
+	public Integer testReq() {
 		return communicationService.testReq("GOLD");
+	}
+	
+	@GetMapping("/communication/period")
+	public List<PeriodBeetwinIfoDto> periodBeetwin(@RequestBody PeriodBeetwinDto periodBeetwinDto) {
+		
+		return communicationService.periodBeetwin(periodBeetwinDto);
 	}
 }
