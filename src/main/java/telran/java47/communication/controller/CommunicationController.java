@@ -86,12 +86,12 @@ public class CommunicationController {
 		return communicationService.findTimeLimitsByIdInDB(id);
 	}
 	
-	@GetMapping("/communication/test")
-	public Integer testReq() {
+	@PostMapping("/communication/test")
+	public String testReq() {
 		return communicationService.testReq("GOLD");
 	}
 	
-	@GetMapping("/communication/period")
+	@PostMapping("/communication/period")
 	public List<PeriodBeetwinIfoDto> periodBeetwin(@RequestBody PeriodBeetwinDto periodBeetwinDto) {
 		
 		return communicationService.periodBeetwin(periodBeetwinDto);
