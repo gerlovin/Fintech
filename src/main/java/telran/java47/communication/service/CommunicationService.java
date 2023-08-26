@@ -9,6 +9,7 @@ import telran.java47.communication.dto.CalcSumPackageDto;
 import telran.java47.communication.dto.CorrelationDto;
 import telran.java47.communication.dto.IrrIncomeDto;
 import telran.java47.communication.dto.ParsedInfoDto;
+import telran.java47.communication.dto.ParserRequestForTwelveDataDto;
 import telran.java47.communication.dto.ParserRequestForYahooDto;
 import telran.java47.communication.dto.PeriodBeetwinDto;
 import telran.java47.communication.dto.PeriodBeetwinIfoDto;
@@ -40,11 +41,11 @@ public interface CommunicationService {
 
 	double prediction(String id);
 
-	List<ParsedInfoDto> parsing(ParserRequestForYahooDto parserRequestForYahooDto);
 	
 	TimeHistoryLimitsForIndexDto findTimeLimitsByIdInDB(String id);
 	
 	String testReq(String name);
+	List<ParsedInfoDto> parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData);
 
 	
 }

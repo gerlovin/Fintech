@@ -21,6 +21,7 @@ import telran.java47.communication.dto.CorrelationDto;
 import telran.java47.communication.dto.EarlestTimestampDto;
 import telran.java47.communication.dto.IrrIncomeDto;
 import telran.java47.communication.dto.ParsedInfoDto;
+import telran.java47.communication.dto.ParserRequestForTwelveDataDto;
 import telran.java47.communication.dto.ParserRequestForYahooDto;
 import telran.java47.communication.dto.PeriodBeetwinDto;
 import telran.java47.communication.dto.PeriodBeetwinIfoDto;
@@ -42,6 +43,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 
 import org.aspectj.weaver.NewConstructorTypeMunger;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -67,15 +69,13 @@ public class CommunicationServiceImpl implements CommunicationService {
 //				.build();
 //		HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 //		System.out.println(response.body());
-		URI uri = URI.create("https://api.twelvedata.com/earliest_timestamp?symbol=" + id
-				+ "&interval=1day&outputsize=30&apikey=" + API_KEY);
-		HttpHeaders headers = new HttpHeaders();
+		URI uri = URI.create("https://api.twelvedata.com/earliest_timestamp?symbol=" + id + "&interval=1day&outputsize=30&apikey=" + API_KEY);
+//		HttpHeaders headers = new HttpHeaders();
 //		headers.add("X-RapidAPI-Key", "324c69fb60msh93f7cf5cb241a94p12eb0bjsn5863365f3ef9");
 //	    headers.add("X-RapidAPI-Host", "twelve-data1.p.rapidapi.com");
 		RequestEntity<String> request = new RequestEntity<>(HttpMethod.GET, uri);
-		ResponseEntity<EarlestTimestampDto> response = restTemplate.exchange(request, EarlestTimestampDto.class);
-		System.out.println(response.getBody().getDatetime());
-		TimeHistoryLimitsForIndexDto result = new TimeHistoryLimitsForIndexDto();
+		ResponseEntity<EarlestTimestampDto> response = restTemplate.exchange(request,EarlestTimestampDto.class);	
+		TimeHistoryLimitsForIndexDto result= new TimeHistoryLimitsForIndexDto();
 		result.setSource(id);
 		result.setToData(LocalDate.now());
 		result.setFromData(response.getBody().getDatetime());
@@ -226,9 +226,18 @@ public class CommunicationServiceImpl implements CommunicationService {
 	}
 
 	@Override
-	public List<ParsedInfoDto> parsing(ParserRequestForYahooDto parserRequestForYahooDto) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<ParsedInfoDto> parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + "/time_series")
+				.queryParam("start_date", parserRequestForTwelveData.getFromData())
+				.queryParam("end_date", parserRequestForTwelveData.getToData())
+				.queryParam("interval", parserRequestForTwelveData.getType())
+				.queryParam("symbol", parserRequestForTwelveData.getSource()[0]);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("apikey", API_KEY);
+		RequestEntity<String> request = new RequestEntity<>(headers, HttpMethod.GET, builder.build().toUri());
+		ResponseEntity <List<ParsedInfoDto>> response = restTemplate.exchange(request,new ParameterizedTypeReference<List<ParsedInfoDto>>() {});
+		
+		return response.getBody();
 	}
 
 	@Override
