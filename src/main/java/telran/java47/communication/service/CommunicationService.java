@@ -44,7 +44,7 @@ public interface CommunicationService {
 	
 	TimeHistoryLimitsForIndexDto findTimeLimitsByIdInDB(String id);
 	
-	Integer testReq(String name);
+	String testReq(String name);
 
 	
 }

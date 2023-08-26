@@ -25,7 +25,6 @@ import telran.java47.communication.dto.TimeHistoryLimitsForIndexDto;
 import telran.java47.communication.dto.TwelveDataSymbolListDto;
 import telran.java47.communication.dto.ValueCloseBeetwinDto;
 import telran.java47.fintech.dao.StockRepository;
-import telran.java47.fintech.model.PeriodBeetwinInfo;
 import telran.java47.fintech.model.TimeHistoryLimitsForIndex;
 
 import java.io.IOException;
@@ -113,15 +112,21 @@ public class CommunicationServiceImpl implements CommunicationService {
 	@Override
 	public List<PeriodBeetwinIfoDto> periodBeetwin(PeriodBeetwinDto periodBeetwinDto) {
 		List<PeriodBeetwinIfoDto> resultList = new ArrayList<>();
-		PeriodBeetwinInfo pbInfo;
+		
 		PeriodBeetwinIfoDto pbInfoDto;
 		System.out.println(periodBeetwinDto.toString());
 		for (int i = 0; i < periodBeetwinDto.getIndexes().length; i++) {
-			pbInfo = stockRepository.periodInfo("GOLD", "DAY", periodBeetwinDto.getQuantity(), periodBeetwinDto.getFrom(), periodBeetwinDto.getTo());
-			System.out.println(pbInfo);
-			pbInfoDto = new PeriodBeetwinIfoDto(periodBeetwinDto.getFrom(), periodBeetwinDto.getTo(), "GOLD", "DAY", pbInfo.getMaxV(), pbInfo.getMean(),
-					 	pbInfo.getMedian(), pbInfo.getMinV(), pbInfo.getStd());
-			resultList.add(pbInfoDto);		 
+			String info = stockRepository.periodInfo(periodBeetwinDto.getIndexes()[i], periodBeetwinDto.getType(), periodBeetwinDto.getQuantity(), periodBeetwinDto.getFrom(), periodBeetwinDto.getTo());
+			if (info != null) {
+				System.out.println(info);
+				String[] infoData = info.split(",");
+				pbInfoDto = new PeriodBeetwinIfoDto(periodBeetwinDto.getFrom(), periodBeetwinDto.getTo(),
+						periodBeetwinDto.getIndexes()[i],
+						String.valueOf(periodBeetwinDto.getQuantity()) + ' ' + periodBeetwinDto.getType(),
+						Double.valueOf(infoData[0]), Double.valueOf(infoData[1]), Double.valueOf(infoData[2]),
+						Double.valueOf(infoData[3]), Double.valueOf(infoData[4]));
+				resultList.add(pbInfoDto);
+			}
 		}
 		return resultList;
 	}
@@ -187,9 +192,9 @@ public class CommunicationServiceImpl implements CommunicationService {
 	}
 
 	@Override
-	public Integer testReq(String name) {
+	public String testReq(String name) {
 
-		return stockRepository.testProcedureCall(10);
+		return stockRepository.testProcedureCall("GOLD", "DAY", 5, LocalDate.now().minusYears(2), LocalDate.now().minusYears(1));
 	}
 
 }
