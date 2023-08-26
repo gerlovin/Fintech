@@ -17,6 +17,7 @@ import telran.java47.communication.dto.CalcSumPackageDto;
 import telran.java47.communication.dto.CorrelationDto;
 import telran.java47.communication.dto.IrrIncomeDto;
 import telran.java47.communication.dto.ParsedInfoDto;
+import telran.java47.communication.dto.ParserRequestForTwelveDataDto;
 import telran.java47.communication.dto.ParserRequestForYahooDto;
 import telran.java47.communication.dto.PeriodBeetwinDto;
 import telran.java47.communication.dto.PeriodBeetwinIfoDto;
@@ -81,18 +82,8 @@ public class CommunicationController {
 		return communicationService.prediction(id);
 	}
 	@PostMapping("/parser")
-	public List<ParsedInfoDto> parsing(@RequestBody ParserRequestForYahooDto parserRequestForYahooDto) {
-		return comunicationService.parsing(parserRequestForYahooDto);
-	/*
-	 * @PostMapping("/index/sum") public List<ParsedInfoDto> parsing(@RequestBody
-	 * ParserRequestForYahooDto parserRequestForYahooDto) { return
-	 * communicationService.parsing(parserRequestForYahooDto); }
-	 */
-	
-	@GetMapping("/communication/index/{id}")
-	public TimeHistoryLimitsForIndexDto timeHistoryLimitsForIndexInDB(@PathVariable String id) {
-		//DONE
-		return communicationService.findTimeLimitsByIdInDB(id);
+	public List<ParsedInfoDto> parsing(@RequestBody ParserRequestForTwelveDataDto parserRequestForTwelveData) {
+		return comunicationService.parsing(parserRequestForTwelveData);
 	}
 	
 	@PostMapping("/communication/test")
