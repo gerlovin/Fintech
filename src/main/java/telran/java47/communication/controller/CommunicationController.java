@@ -91,9 +91,8 @@ public class CommunicationController {
 		return communicationService.testReq("GOLD");
 	}
 	
-	@PostMapping("/communication/period")
-	public List<PeriodBeetwinIfoDto> periodBeetwin(@RequestBody PeriodBeetwinDto periodBeetwinDto) {
-		
+	@PostMapping("/communication/index")
+	public List<PeriodBeetwinIfoDto> periodBeetwin(@RequestBody PeriodBeetwinDto periodBeetwinDto) {	
 		return communicationService.periodBeetwin(periodBeetwinDto);
 	}
 }

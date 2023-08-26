@@ -19,9 +19,8 @@ public interface StockRepository extends JpaRepository<Stock, StockKey> {
 	@Query("select new telran.java47.fintech.model.TimeHistoryLimitsForIndex( MIN(s.stockKey.dateStock), MAX(s.stockKey.dateStock)) from Stock s where s.stockKey.name LIKE ?1") 
 	TimeHistoryLimitsForIndex timeLimits(String name);
 	
-	
 	//test
-	int countByStockKeyName(String name);
+	//int countByStockKeyName(String name);
 	
 	@Procedure("PeriodForOneIndexv3")
 	String testProcedureCall(String name, String typePeriod, int lenghtPeriod, LocalDate dateFrom, LocalDate dateTo);
