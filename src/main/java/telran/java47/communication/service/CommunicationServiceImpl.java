@@ -3,6 +3,7 @@ package telran.java47.communication.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -139,15 +140,11 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 	@Override
 	public ArrayList<ValueCloseBeetwinDto> valueCloseBeetwin(PeriodBeetwinDto periodBeetwinDto) {
-		//List<Stock> stocks = stockRepository.findStockNameAndDate(periodBeetwinDto.getIndexes()[0], periodBeetwinDto.getFrom(), periodBeetwinDto.getTo());
+		
 		String source = periodBeetwinDto.getIndexes()[0];
 		LocalDate minDate = periodBeetwinDto.getFrom();
 		LocalDate maxDate = periodBeetwinDto.getTo();
 		List<Stock> stocks = stockRepository.findByStockKeyNameIgnoreCaseStockKeyDateStockBetween(source, minDate, maxDate);
-		
-	
-		System.out.println(stocks.size());
-		System.out.println(periodBeetwinDto.toString());
 		
 		
 		String typeS = String.valueOf(periodBeetwinDto.getQuantity()) + ' ' + periodBeetwinDto.getType();
@@ -157,8 +154,32 @@ public class CommunicationServiceImpl implements CommunicationService {
 			.map(s -> new ValueCloseBeetwinDto(s.getStockKey().getDateStock(), 
 					s.getStockKey().getDateStock().plus(periodBeetwinDto.getQuantity(), ChronoUnit.DAYS), 
 					source, typeS, minDate, maxDate, s.getCloseV(), 0, 0, new ArrayList<Double>()))
+			.filter(v -> v.getTo().isBefore( v.getMaxDate().plusDays(1)))
 			.collect(Collectors.toCollection(ArrayList::new));
 		
+		Map<LocalDate, Double> mapClosesMap = stocks.stream()
+					.collect(Collectors.toMap(s -> s.getStockKey().getDateStock(), s -> s.getCloseV()));
+		
+		//valuesReturnList.forEach(System.out::println);
+		//mapClosesMap.entrySet().forEach(System.out::println);
+		LocalDate maxDate1;
+		LocalDate dateCur;
+
+		
+		for (ValueCloseBeetwinDto vCDto : valuesReturnList) {
+			dateCur = vCDto.getFrom();
+			maxDate1 = vCDto.getTo();
+			while (!(dateCur.isAfter(maxDate1))) {
+
+				vCDto.getListClose().add(mapClosesMap.get(dateCur));
+				if (dateCur.isEqual(maxDate1)) {
+					vCDto.setEndClose(mapClosesMap.get(dateCur));
+					vCDto.setValueClose(vCDto.getEndClose() - vCDto.getStartClose());
+				}
+				dateCur = dateCur.plusDays(1);
+			}
+		}
+
 		return valuesReturnList;
 	}
 
