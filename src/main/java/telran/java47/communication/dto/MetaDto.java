@@ -18,4 +18,5 @@ public class MetaDto {
 	String mic_code;
 	String typeString;
 	
+	
 }
