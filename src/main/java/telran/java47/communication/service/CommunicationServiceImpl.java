@@ -29,7 +29,9 @@ import telran.java47.communication.dto.PeriodBeetwinIfoDto;
 import telran.java47.communication.dto.TimeHistoryLimitsForIndexDto;
 import telran.java47.communication.dto.TwelveDataSymbolListDto;
 import telran.java47.communication.dto.ValueCloseBeetwinDto;
+import telran.java47.communication.dto.ValueDto;
 import telran.java47.fintech.dao.StockRepository;
+import telran.java47.fintech.model.StockKey;
 import telran.java47.fintech.model.Stock;
 import telran.java47.fintech.model.TimeHistoryLimitsForIndex;
 
@@ -228,21 +230,27 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 	@Override
 	public ParsedInfoDto parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData) {
-		System.out.println("In parsing");
-//		URI uri = URI.create("https://api.twelvedata.com/time_series?&start_date=2020-01-06&end_date=2020-05-06&symbol=aapl&interval=1day&apikey=b4130a696aff4fa0b4e71c0400ded3b0");
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + "/time_series")
 				.queryParam("start_date", parserRequestForTwelveData.getFromData())
 				.queryParam("end_date", parserRequestForTwelveData.getToData())
 				.queryParam("interval", parserRequestForTwelveData.getType())
 				.queryParam("symbol", parserRequestForTwelveData.getSource()[0])
 				.queryParam("apikey", API_KEY);
-//		HttpHeaders headers = new HttpHeaders();
-//		headers.add("apikey", API_KEY);
 		RequestEntity<String> request = new RequestEntity<>(HttpMethod.GET,builder.build().toUri());
-//				builder.build().toUri());
 		ResponseEntity <ParsedInfoDto> response = restTemplate.exchange(request, ParsedInfoDto.class);
 		System.out.println("response :" + response.getBody());
-		return response.getBody();
+		ParsedInfoDto newData = response.getBody();
+//		Stock stock = new Stock();
+//		StockKey stockKey = new StockKey(newData.getMeta().getSymbol(), null);
+		Arrays.stream(newData.getValues())
+		             .map(
+		                 s -> new Stock(new StockKey(newData.getMeta().getSymbol(), s.getDatetime()),
+		            	 s.getOpen(),s.getHigh(),s.getLow(),s.getClose(),s.getClose(),s.getVolume(), true)
+		            	 )
+		             .forEach(s ->  stockRepository.save(s));
+		
+//		return response.getBody();
+		return null;
 	}
 
 	@Override
