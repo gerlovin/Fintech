@@ -16,6 +16,7 @@ import telran.java47.communication.dto.ApyIncomDto;
 import telran.java47.communication.dto.CalcSumPackageDto;
 import telran.java47.communication.dto.CorrelationDto;
 import telran.java47.communication.dto.IrrIncomeDto;
+import telran.java47.communication.dto.OldParsedInfoDto;
 import telran.java47.communication.dto.ParsedInfoDto;
 import telran.java47.communication.dto.ParserRequestForTwelveDataDto;
 import telran.java47.communication.dto.ParserRequestForYahooDto;
@@ -82,7 +83,7 @@ public class CommunicationController {
 		return communicationService.prediction(id);
 	}
 	@PostMapping("/parser")
-	public List<ParsedInfoDto> parsing(@RequestBody ParserRequestForTwelveDataDto parserRequestForTwelveData) {
+	public ParsedInfoDto parsing(@RequestBody ParserRequestForTwelveDataDto parserRequestForTwelveData) {
 		return comunicationService.parsing(parserRequestForTwelveData);
 	}
 	

@@ -20,6 +20,7 @@ import telran.java47.communication.dto.CalcSumPackageDto;
 import telran.java47.communication.dto.CorrelationDto;
 import telran.java47.communication.dto.EarlestTimestampDto;
 import telran.java47.communication.dto.IrrIncomeDto;
+import telran.java47.communication.dto.OldParsedInfoDto;
 import telran.java47.communication.dto.ParsedInfoDto;
 import telran.java47.communication.dto.ParserRequestForTwelveDataDto;
 import telran.java47.communication.dto.ParserRequestForYahooDto;
@@ -226,17 +227,21 @@ public class CommunicationServiceImpl implements CommunicationService {
 	}
 
 	@Override
-	public List<ParsedInfoDto> parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData) {
+	public ParsedInfoDto parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData) {
+		System.out.println("In parsing");
+//		URI uri = URI.create("https://api.twelvedata.com/time_series?&start_date=2020-01-06&end_date=2020-05-06&symbol=aapl&interval=1day&apikey=b4130a696aff4fa0b4e71c0400ded3b0");
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + "/time_series")
 				.queryParam("start_date", parserRequestForTwelveData.getFromData())
 				.queryParam("end_date", parserRequestForTwelveData.getToData())
 				.queryParam("interval", parserRequestForTwelveData.getType())
-				.queryParam("symbol", parserRequestForTwelveData.getSource()[0]);
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("apikey", API_KEY);
-		RequestEntity<String> request = new RequestEntity<>(headers, HttpMethod.GET, builder.build().toUri());
-		ResponseEntity <List<ParsedInfoDto>> response = restTemplate.exchange(request,new ParameterizedTypeReference<List<ParsedInfoDto>>() {});
-		
+				.queryParam("symbol", parserRequestForTwelveData.getSource()[0])
+				.queryParam("apikey", API_KEY);
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.add("apikey", API_KEY);
+		RequestEntity<String> request = new RequestEntity<>(HttpMethod.GET,builder.build().toUri());
+//				builder.build().toUri());
+		ResponseEntity <ParsedInfoDto> response = restTemplate.exchange(request, ParsedInfoDto.class);
+		System.out.println("response :" + response.getBody());
 		return response.getBody();
 	}
 
