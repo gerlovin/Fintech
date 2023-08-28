@@ -1,7 +1,5 @@
 package telran.java47.communication.dto;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +9,13 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListTwelveDataDto {
-	List <OldParsedInfoDto> value; 
+public class MetaDto {
+	String symbol;
+	String interval;
+	String currency;
+	String exchange_timzone;
+	String exchange;
+	String mic_code;
+	String typeString;
+	
 }

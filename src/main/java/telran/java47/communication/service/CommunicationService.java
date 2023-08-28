@@ -8,6 +8,7 @@ import telran.java47.communication.dto.ApyIncomDto;
 import telran.java47.communication.dto.CalcSumPackageDto;
 import telran.java47.communication.dto.CorrelationDto;
 import telran.java47.communication.dto.IrrIncomeDto;
+import telran.java47.communication.dto.OldParsedInfoDto;
 import telran.java47.communication.dto.ParsedInfoDto;
 import telran.java47.communication.dto.ParserRequestForTwelveDataDto;
 import telran.java47.communication.dto.ParserRequestForYahooDto;
@@ -46,6 +47,7 @@ public interface CommunicationService {
 	
 	String testReq(String name);
 	List<ParsedInfoDto> parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData);
+	ParsedInfoDto parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData);
 
 	
 }
