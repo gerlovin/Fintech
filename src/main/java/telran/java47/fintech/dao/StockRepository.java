@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
 
-
 import telran.java47.fintech.model.Stock;
 import telran.java47.fintech.model.StockKey;
 import telran.java47.fintech.model.TimeHistoryLimitsForIndex;
@@ -28,5 +27,7 @@ public interface StockRepository extends JpaRepository<Stock, StockKey> {
 	@Procedure("PeriodForIndexInInterval")
 	String periodInfo(String name, String typePeriod, int lenghtPeriod, LocalDate dateFrom, LocalDate dateTo);
 	
+	@Query("select s from Stock s where s.stockKey.name LIKE ?1 AND  s.stockKey.dateStock BETWEEN ?2 AND ?3")
+	List<Stock> findByStockKeyNameIgnoreCaseStockKeyDateStockBetween(String name, LocalDate dateFrom, LocalDate dateTo);
 
 }

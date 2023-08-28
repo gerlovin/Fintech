@@ -3,6 +3,8 @@ package telran.java47.communication.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.swing.text.StyledEditorKit.BoldAction;
 
@@ -25,6 +27,7 @@ import telran.java47.communication.dto.TimeHistoryLimitsForIndexDto;
 import telran.java47.communication.dto.TwelveDataSymbolListDto;
 import telran.java47.communication.dto.ValueCloseBeetwinDto;
 import telran.java47.fintech.dao.StockRepository;
+import telran.java47.fintech.model.Stock;
 import telran.java47.fintech.model.TimeHistoryLimitsForIndex;
 
 import java.io.IOException;
@@ -34,7 +37,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 
+import org.aspectj.weaver.NewConstructorTypeMunger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -133,8 +139,27 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 	@Override
 	public ArrayList<ValueCloseBeetwinDto> valueCloseBeetwin(PeriodBeetwinDto periodBeetwinDto) {
-		// TODO Auto-generated method stub
-		return null;
+		//List<Stock> stocks = stockRepository.findStockNameAndDate(periodBeetwinDto.getIndexes()[0], periodBeetwinDto.getFrom(), periodBeetwinDto.getTo());
+		String source = periodBeetwinDto.getIndexes()[0];
+		LocalDate minDate = periodBeetwinDto.getFrom();
+		LocalDate maxDate = periodBeetwinDto.getTo();
+		List<Stock> stocks = stockRepository.findByStockKeyNameIgnoreCaseStockKeyDateStockBetween(source, minDate, maxDate);
+		
+	
+		System.out.println(stocks.size());
+		System.out.println(periodBeetwinDto.toString());
+		
+		
+		String typeS = String.valueOf(periodBeetwinDto.getQuantity()) + ' ' + periodBeetwinDto.getType();
+		
+		ArrayList<ValueCloseBeetwinDto> valuesReturnList  =  stocks.stream()
+			.filter(s -> s.getWorkDayOrNot().equals(Boolean.TRUE))
+			.map(s -> new ValueCloseBeetwinDto(s.getStockKey().getDateStock(), 
+					s.getStockKey().getDateStock().plus(periodBeetwinDto.getQuantity(), ChronoUnit.DAYS), 
+					source, typeS, minDate, maxDate, s.getCloseV(), 0, 0, new ArrayList<Double>()))
+			.collect(Collectors.toCollection(ArrayList::new));
+		
+		return valuesReturnList;
 	}
 
 	@Override
