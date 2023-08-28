@@ -7,12 +7,14 @@ import javax.persistence.Embeddable;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
 @Embeddable
+@Getter
 public class StockKey implements Serializable{
 
 	private static final long serialVersionUID = 6205196055139659340L;

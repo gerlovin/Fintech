@@ -83,6 +83,7 @@ public class CommunicationController {
 	
 	@GetMapping("/communication/index/{id}")
 	public TimeHistoryLimitsForIndexDto timeHistoryLimitsForIndexInDB(@PathVariable String id) {
+		//DONE
 		return communicationService.findTimeLimitsByIdInDB(id);
 	}
 	
@@ -92,7 +93,8 @@ public class CommunicationController {
 	}
 	
 	@PostMapping("/communication/index")
-	public List<PeriodBeetwinIfoDto> periodBeetwin(@RequestBody PeriodBeetwinDto periodBeetwinDto) {	
+	public List<PeriodBeetwinIfoDto> periodBeetwin(@RequestBody PeriodBeetwinDto periodBeetwinDto) {
+		//DONE
 		return communicationService.periodBeetwin(periodBeetwinDto);
 	}
 }
