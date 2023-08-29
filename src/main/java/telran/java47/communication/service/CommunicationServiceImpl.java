@@ -136,10 +136,26 @@ public class CommunicationServiceImpl implements CommunicationService {
 		
 		String typeS = String.valueOf(periodBeetwinDto.getQuantity()) + ' ' + periodBeetwinDto.getType();
 		
+		TemporalUnit temporalUnit;
+		switch (periodBeetwinDto.getType().toUpperCase()) {
+        	case "WEEKS":
+        		temporalUnit = ChronoUnit.WEEKS;
+            break;
+        	case "MONTHS":
+        		temporalUnit = ChronoUnit.MONTHS;
+            break;
+        	case "YEARS":
+        		temporalUnit = ChronoUnit.YEARS;
+        		 break;
+            default:
+            	temporalUnit = ChronoUnit.DAYS;
+		}
+	
+		
 		ArrayList<ValueCloseBeetwinDto> valuesReturnList  =  stocks.stream()
 			.filter(s -> s.getWorkDayOrNot().equals(Boolean.TRUE))
 			.map(s -> new ValueCloseBeetwinDto(s.getStockKey().getDateStock(), 
-					s.getStockKey().getDateStock().plus(periodBeetwinDto.getQuantity(), ChronoUnit.DAYS), 
+					s.getStockKey().getDateStock().plus(periodBeetwinDto.getQuantity(), temporalUnit), 
 					source, typeS, minDate, maxDate, s.getCloseV(), 0, 0, new ArrayList<Double>()))
 			.filter(v -> v.getTo().isBefore( v.getMaxDate().plusDays(1)))
 			.collect(Collectors.toCollection(ArrayList::new));
