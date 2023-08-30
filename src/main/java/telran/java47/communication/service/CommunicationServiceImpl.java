@@ -163,8 +163,6 @@ public class CommunicationServiceImpl implements CommunicationService {
 		Map<LocalDate, Double> mapClosesMap = stocks.stream()
 					.collect(Collectors.toMap(s -> s.getStockKey().getDateStock(), s -> s.getCloseV()));
 		
-		//valuesReturnList.forEach(System.out::println);
-		//mapClosesMap.entrySet().forEach(System.out::println);
 		LocalDate maxDate1;
 		LocalDate dateCur;
 
@@ -206,8 +204,8 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 	@Override
 	public String correlation(CorrelationDto correlationDto) {
-		// TODO Auto-generated method stub
-		return null;
+		return  stockRepository.correlationCalc(correlationDto.getIndexes()[0].toUpperCase(), 
+				correlationDto.getIndexes()[1].toUpperCase(), correlationDto.getFrom(), correlationDto.getTo()).toString();		
 	}
 
 	@Override
