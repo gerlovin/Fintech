@@ -14,6 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@Getter
 @Embeddable
 @Getter
 public class StockKey implements Serializable{
