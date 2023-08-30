@@ -5,13 +5,15 @@ import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class CorrelationDto {
 	
 	String[] indexes;
-	LocalDate fromDate;
-	LocalDate To;
+	LocalDate from;
+	LocalDate to;
 }
