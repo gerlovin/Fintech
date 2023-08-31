@@ -136,21 +136,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 		
 		String typeS = String.valueOf(periodBeetwinDto.getQuantity()) + ' ' + periodBeetwinDto.getType();
 		
-		TemporalUnit temporalUnit;
-		switch (periodBeetwinDto.getType().toUpperCase()) {
-        	case "WEEKS":
-        		temporalUnit = ChronoUnit.WEEKS;
-            break;
-        	case "MONTHS":
-        		temporalUnit = ChronoUnit.MONTHS;
-            break;
-        	case "YEARS":
-        		temporalUnit = ChronoUnit.YEARS;
-        		 break;
-            default:
-            	temporalUnit = ChronoUnit.DAYS;
-		}
-	
+		TemporalUnit temporalUnit = getPeriodUnit(periodBeetwinDto.getType().toUpperCase());
 		
 		ArrayList<ValueCloseBeetwinDto> valuesReturnList  =  stocks.stream()
 			.filter(s -> s.getWorkDayOrNot().equals(Boolean.TRUE))
@@ -209,9 +195,71 @@ public class CommunicationServiceImpl implements CommunicationService {
 	}
 
 	@Override
-	public AllApyIncomeDto calcIncomeAllApy(PeriodBeetwinDto periodBeetwinDto) {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<AllApyIncomeDto> calcIncomeAllApy(PeriodBeetwinDto periodBeetwinDto) {
+		String source = periodBeetwinDto.getIndexes()[0];
+		LocalDate minDate = periodBeetwinDto.getFrom();
+		LocalDate maxDate = periodBeetwinDto.getTo();
+
+		System.out.println(periodBeetwinDto.toString());
+		List<Stock> stocks = stockRepository.findByStockKeyNameIgnoreCaseStockKeyDateStockBetween(source, minDate, maxDate);
+		System.out.println(stocks.size());
+		
+		String typeS = String.valueOf(periodBeetwinDto.getQuantity()) + ' ' + periodBeetwinDto.getType();
+		double yearsCount = getPeriodInYears(periodBeetwinDto.getType().toUpperCase(), periodBeetwinDto.getQuantity());
+		System.out.println(yearsCount);
+		TemporalUnit temporalUnit = getPeriodUnit(periodBeetwinDto.getType().toUpperCase());
+		
+		ArrayList<AllApyIncomeDto> valuesReturnList  =  stocks.stream()
+				.filter(s -> s.getWorkDayOrNot().equals(Boolean.TRUE))
+				.filter(s -> s.getCloseV()!=null)
+				.map(s -> new AllApyIncomeDto(source, minDate, maxDate, typeS, 
+						s.getStockKey().getDateStock(), s.getStockKey().getDateStock().plus(periodBeetwinDto.getQuantity(), temporalUnit),
+						s.getCloseV(), Double.valueOf(0), Double.valueOf(0), Double.valueOf(0)) )
+				.filter(v -> v.getTo().isBefore( v.getHistoryTo().plusDays(1)))
+				.collect(Collectors.toCollection(ArrayList::new));
+			
+			Map<LocalDate, Double> mapClosesMap = stocks.stream()
+					.filter(s -> s.getCloseV()!=null)
+					.collect(Collectors.toMap(s -> s.getStockKey().getDateStock(), s -> s.getCloseV()));
+			
+		valuesReturnList.stream()
+			.forEach(v -> {v.setSaleAmount(mapClosesMap.get(v.getTo())); 
+						v.setIncome(v.getSaleAmount() - v.getPurchaseAmount());	
+						v.setApy((Math.pow(v.getSaleAmount()/v.getPurchaseAmount(), 1/yearsCount) - 1) *100);
+						});
+			
+		return valuesReturnList;
+	}
+
+	private double getPeriodInYears(String periodString, int i) {
+		int daysInYear = LocalDate.of(LocalDate.now().getYear(), 1, 1).minusDays(1).getDayOfYear();
+		switch (periodString) {
+		case "DAYS":
+			return i/daysInYear;
+		case "WEEKS":
+			return i/(daysInYear/7);
+		case "MONTHS":
+			return i/12;
+		case "YEARS":
+			return i;
+		default:
+			return 0;
+		}
+	}
+
+	private TemporalUnit getPeriodUnit(String periodString) {
+		switch (periodString) {
+		case "DAYS":
+			return ChronoUnit.DAYS;
+		case "WEEKS":
+			return ChronoUnit.WEEKS;
+		case "MONTHS":
+			return ChronoUnit.MONTHS;
+		case "YEARS":
+			return ChronoUnit.YEARS;
+		default:
+			return null;
+		}
 	}
 
 	@Override

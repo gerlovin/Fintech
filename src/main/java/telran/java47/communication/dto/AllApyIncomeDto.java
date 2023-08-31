@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,9 +18,12 @@ public class AllApyIncomeDto {
 	String type;
 	LocalDate from;
 	LocalDate to;
-    double purchaseAmount;	
-    double saleAmount;
-    BigDecimal income;
-    BigDecimal apy;
+    Double purchaseAmount;	
+    @Setter
+    Double saleAmount;
+    @Setter
+    Double income;
+    @Setter
+    Double apy;
 
 }

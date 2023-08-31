@@ -36,7 +36,7 @@ public interface CommunicationService {
 
 	String correlation(CorrelationDto correlationDto);
 
-	AllApyIncomeDto calcIncomeAllApy(PeriodBeetwinDto periodBeetwinDto);
+	ArrayList<AllApyIncomeDto> calcIncomeAllApy(PeriodBeetwinDto periodBeetwinDto);
 
 	boolean deleteAllHistoryForCompany(String id);
 
