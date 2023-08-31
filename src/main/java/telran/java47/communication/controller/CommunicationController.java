@@ -63,7 +63,7 @@ public class CommunicationController {
 		return communicationService.calcIncomeApy(periodBeetwinDto);
 	}
 	@PostMapping("/communication/index/apy_all")
-	public AllApyIncomeDto calcIncomAllApy(@RequestBody PeriodBeetwinDto periodBeetwinDto) {
+	public ArrayList<AllApyIncomeDto> calcIncomAllApy(@RequestBody PeriodBeetwinDto periodBeetwinDto) {
 		return communicationService.calcIncomeAllApy(periodBeetwinDto);
 	}
 	@PostMapping("/indexIrr")
