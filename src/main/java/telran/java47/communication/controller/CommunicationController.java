@@ -64,6 +64,7 @@ public class CommunicationController {
 	}
 	@PostMapping("/communication/index/apy_all")
 	public ArrayList<AllApyIncomeDto> calcIncomAllApy(@RequestBody PeriodBeetwinDto periodBeetwinDto) {
+		//DONE
 		return communicationService.calcIncomeAllApy(periodBeetwinDto);
 	}
 	@PostMapping("/indexIrr")
@@ -72,6 +73,7 @@ public class CommunicationController {
 	}
 	@PostMapping("/communication/index/correlation")
 	public String /*ENUM*/ correlation(@RequestBody CorrelationDto correlationDto) {
+		//DONE
 		return communicationService.correlation(correlationDto);
 	}
 	@DeleteMapping("/index{id}")

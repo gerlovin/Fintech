@@ -14,7 +14,7 @@ public class ApyIncomDto {
 	
 	LocalDate fromDate;
 	LocalDate to;
-	ArrayList<String> source;
+	String[] source;
 	String type;
 	IncomeApyDto minIncome;
 	IncomeApyDto maxIncome;

@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.swing.text.StyledEditorKit.BoldAction;
+import org.springframework.transaction.annotation.Transactional;
+
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -16,6 +19,7 @@ import telran.java47.communication.dto.ApyIncomDto;
 import telran.java47.communication.dto.CalcSumPackageDto;
 import telran.java47.communication.dto.CorrelationDto;
 import telran.java47.communication.dto.EarlestTimestampDto;
+import telran.java47.communication.dto.IncomeApyDto;
 import telran.java47.communication.dto.IrrIncomeDto;
 import telran.java47.communication.dto.ParsedInfoDto;
 import telran.java47.communication.dto.ParserRequestForTwelveDataDto;
@@ -24,7 +28,9 @@ import telran.java47.communication.dto.PeriodBeetwinIfoDto;
 import telran.java47.communication.dto.TimeHistoryLimitsForIndexDto;
 import telran.java47.communication.dto.TwelveDataSymbolListDto;
 import telran.java47.communication.dto.ValueCloseBeetwinDto;
+import telran.java47.fintech.dao.DimensionRepository;
 import telran.java47.fintech.dao.StockRepository;
+import telran.java47.fintech.model.DimensionProcedure;
 import telran.java47.fintech.model.StockKey;
 import telran.java47.fintech.model.Stock;
 import telran.java47.fintech.model.TimeHistoryLimitsForIndex;
@@ -41,6 +47,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class CommunicationServiceImpl implements CommunicationService {
 
 	final StockRepository stockRepository;
+	final DimensionRepository dimensionRepository;
 	static final RestTemplate restTemplate = new RestTemplate();
 	static final String BASE_URL = "https://api.twelvedata.com";
 	static final String API_KEY = "b4130a696aff4fa0b4e71c0400ded3b0";
@@ -177,9 +184,23 @@ public class CommunicationServiceImpl implements CommunicationService {
 	}
 
 	@Override
+	@Transactional
 	public ApyIncomDto calcIncomeApy(PeriodBeetwinDto periodBeetwinDto) {
-		// TODO Auto-generated method stub
-		return null;
+		double periodYears = getPeriodInYears(periodBeetwinDto.getType().toUpperCase(), periodBeetwinDto.getQuantity());
+		ArrayList<DimensionProcedure>  dimensionList = dimensionRepository.incomeWithAPI(periodBeetwinDto.getIndexes()[0], periodBeetwinDto.getType(), periodBeetwinDto.getQuantity(), periodYears, periodBeetwinDto.getFrom(), periodBeetwinDto.getTo());
+
+		IncomeApyDto minApyDto = createIncomeApyDtoFromDimensionProcedure(dimensionList.get(0));
+		IncomeApyDto maxApyDto = createIncomeApyDtoFromDimensionProcedure(dimensionList.get(1));
+		String typeS = String.valueOf(periodBeetwinDto.getQuantity()) + ' ' + periodBeetwinDto.getType();
+		
+		return new ApyIncomDto(periodBeetwinDto.getFrom(), periodBeetwinDto.getTo(), 
+				periodBeetwinDto.getIndexes(), typeS, minApyDto, maxApyDto);
+	}
+
+	private IncomeApyDto createIncomeApyDtoFromDimensionProcedure(DimensionProcedure dim) {
+		
+		return new IncomeApyDto(dim.getDateOfPurchase(), dim.getPurchaseAmount(), 
+					dim.getDateOfSale(), dim.getSaleAmount(), dim.getIncome(), dim.getDimension());
 	}
 
 	@Override

@@ -1,20 +1,27 @@
-package telran.java47.communication.dto;
+package telran.java47.fintech.model;
 
-import java.math.BigDecimal;
+
 import java.time.LocalDate;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-@Getter
-@AllArgsConstructor
 @NoArgsConstructor
-public class IncomeApyDto {
+@AllArgsConstructor
+@Getter
+@ToString
+@Entity
+public class DimensionProcedure {
+	@Id
 	LocalDate dateOfPurchase;
     double purchaseAmount;
     LocalDate dateOfSale;
     double saleAmount;
     double income;
-    double apy;
-
+    double dimension;
 }
