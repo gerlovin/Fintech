@@ -9,6 +9,7 @@ import telran.java47.fintech.model.StockKey;
 import telran.java47.fintech.model.TimeHistoryLimitsForIndex;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -31,5 +32,8 @@ public interface StockRepository extends JpaRepository<Stock, StockKey> {
 	
 	@Procedure("CorrelationCalc")
 	String correlationCalc(String name1, String name2, LocalDate dateFrom, LocalDate dateTo);
+	
+	@Procedure("CalcSumPackage")
+	String calcSumPackage(Double idPackage, LocalDateTime timePackage, String typePeriod, int lenghtPeriod, LocalDate dateFrom, LocalDate dateTo);
 
 }
