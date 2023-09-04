@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import telran.java47.communication.dto.AllApyIncomeDto;
@@ -54,7 +53,7 @@ public class CommunicationController {
 	public ArrayList<ValueCloseBeetwinDto> valueCloseBeetwin(@RequestBody PeriodBeetwinDto periodBeetwinDto) {
 		return communicationService.valueCloseBeetwin(periodBeetwinDto);
 	}
-	@PostMapping("/index/sum")
+	@PostMapping("/communication/index/sum")
 	public PeriodBeetwinIfoDto calcSumPackage(@RequestBody CalcSumPackageDto calcSumPackageDto) {
 		return communicationService.calcSumPackage(calcSumPackageDto);
 	}

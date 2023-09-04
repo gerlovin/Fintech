@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.swing.text.StyledEditorKit.BoldAction;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.http.HttpMethod;
@@ -29,14 +28,17 @@ import telran.java47.communication.dto.TimeHistoryLimitsForIndexDto;
 import telran.java47.communication.dto.TwelveDataSymbolListDto;
 import telran.java47.communication.dto.ValueCloseBeetwinDto;
 import telran.java47.fintech.dao.DimensionRepository;
+import telran.java47.fintech.dao.PackageRepository;
 import telran.java47.fintech.dao.StockRepository;
 import telran.java47.fintech.model.DimensionProcedure;
+import telran.java47.fintech.model.NameAmount;
 import telran.java47.fintech.model.StockKey;
 import telran.java47.fintech.model.Stock;
 import telran.java47.fintech.model.TimeHistoryLimitsForIndex;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -48,6 +50,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 	final StockRepository stockRepository;
 	final DimensionRepository dimensionRepository;
+	final PackageRepository packageRepository;
 	static final RestTemplate restTemplate = new RestTemplate();
 	static final String BASE_URL = "https://api.twelvedata.com";
 	static final String API_KEY = "b4130a696aff4fa0b4e71c0400ded3b0";
@@ -179,8 +182,33 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 	@Override
 	public PeriodBeetwinIfoDto calcSumPackage(CalcSumPackageDto calcSumPackageDto) {
-		// TODO Auto-generated method stub
-		return null;
+		LocalDateTime timePackage = LocalDateTime.now();
+		Double idPackage = Math.random(); 
+		
+		for (int i = 0; i < calcSumPackageDto.getIndexes().size(); i++) {
+			NameAmount nameAmount = new NameAmount(Long.valueOf(0), idPackage, timePackage,
+					calcSumPackageDto.getIndexes().get(i), 
+					calcSumPackageDto.getAmount().get(i));
+			packageRepository.save(nameAmount);
+		}
+		packageRepository.flush();
+		String info = stockRepository.calcSumPackage(idPackage, timePackage, 
+				calcSumPackageDto.getType(), calcSumPackageDto.getQuantity(),
+				calcSumPackageDto.getFrom(), calcSumPackageDto.getTo());
+		System.out.println(info);
+		PeriodBeetwinIfoDto pbInfoDto = null;
+		if (info != null) {
+			String concatenatedNames = calcSumPackageDto.getIndexes().stream()
+					  .collect(Collectors.joining(", "));
+				
+			String[] infoData = info.split(",");
+			pbInfoDto = new PeriodBeetwinIfoDto(calcSumPackageDto.getFrom(), calcSumPackageDto.getTo(),
+					"Package for: " + concatenatedNames,
+					String.valueOf(calcSumPackageDto.getQuantity()) + ' ' + calcSumPackageDto.getType(),
+					Double.valueOf(infoData[0]), Double.valueOf(infoData[1]), Double.valueOf(infoData[2]),
+					Double.valueOf(infoData[3]), Double.valueOf(infoData[4]));
+		}
+		return pbInfoDto;
 	}
 
 	@Override

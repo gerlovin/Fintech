@@ -15,6 +15,6 @@ public class CalcSumPackageDto {
 	ArrayList<Integer> amount;
     LocalDate from;
     LocalDate to;
-    TimeType type;
+    String type;
     int quantity;
 }
