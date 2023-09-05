@@ -1,0 +1,28 @@
+package telran.java47.communication.service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import lombok.RequiredArgsConstructor;
+import telran.java47.fintech.dao.PackageRepository;
+import telran.java47.fintech.model.NameAmount;
+
+@Component
+@RequiredArgsConstructor
+public class ScheduledTasks {
+	final PackageRepository packageRepository;
+
+	//(cron = "0 39 10 * * ?") // 10:39 am
+	
+	@Scheduled(cron = "0 0 1 * * ?")
+	public void cleanNameAmount() {
+		LocalDateTime dateTimeDelete = LocalDateTime.now().minusHours(1);
+		List<NameAmount> listNameAmounts = packageRepository.findByTimePackageIsBefore(dateTimeDelete);
+		if (listNameAmounts != null) {
+			packageRepository.deleteAll(listNameAmounts);
+		}
+	}
+}
