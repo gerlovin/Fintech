@@ -9,10 +9,12 @@ import javax.persistence.Id;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class NameAmount {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment strategy

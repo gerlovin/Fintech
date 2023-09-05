@@ -378,8 +378,11 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 	@Override
 	public String testReq(String name) {
-
-		return stockRepository.testProcedureCall("GOLD", "DAY", 5, LocalDate.now().minusYears(2), LocalDate.now().minusYears(1));
+		List<NameAmount> listNameAmounts = packageRepository.findByTimePackageIsBefore(LocalDateTime.now());
+		listNameAmounts.stream()
+			.forEach(s -> System.out.println(s));
+		System.out.println(listNameAmounts.size());
+		return null;
 	}
 
 }
