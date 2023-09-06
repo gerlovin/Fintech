@@ -16,7 +16,6 @@ import lombok.Setter;
 @EqualsAndHashCode
 @Getter
 @Embeddable
-@Getter
 public class StockKey implements Serializable{
 
 	private static final long serialVersionUID = 6205196055139659340L;
