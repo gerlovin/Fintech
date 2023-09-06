@@ -35,9 +35,9 @@ public class CommunicationController {
 	
 	@GetMapping("/parser/{id}")
 	public TimeHistoryLimitsForIndexDto findTimeLimitsForId(@PathVariable String id) throws InterruptedException, Exception {
-		return comunicationService.findTimeLimitsById(id);
+		return communicationService.findTimeLimitsById(id);
 	}
-	@GetMapping("/index")
+//	@GetMapping("/index")
 	//Committed by Livshits because there was a mistake
 //	@GetMapping("/parser/{id}")
 //	public TimeHistoryLimitsForIndexDto findPostById(@PathVariable String id) {
@@ -83,8 +83,8 @@ public class CommunicationController {
 		return communicationService.prediction(id);
 	}
 	@PostMapping("/parser")
-	public ParsedInfoDto parsing(@RequestBody ParserRequestForTwelveDataDto parserRequestForTwelveData) {
-		return comunicationService.parsing(parserRequestForTwelveData);
+	public boolean parsing(@RequestBody ParserRequestForTwelveDataDto parserRequestForTwelveData) {
+		return communicationService.parsing(parserRequestForTwelveData);
 	}
 	
 	@PostMapping("/communication/test")

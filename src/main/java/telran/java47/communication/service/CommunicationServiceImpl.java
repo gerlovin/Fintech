@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-
-import javax.swing.text.StyledEditorKit.BoldAction;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -20,38 +17,23 @@ import telran.java47.communication.dto.CalcSumPackageDto;
 import telran.java47.communication.dto.CorrelationDto;
 import telran.java47.communication.dto.EarlestTimestampDto;
 import telran.java47.communication.dto.IrrIncomeDto;
-import telran.java47.communication.dto.OldParsedInfoDto;
 import telran.java47.communication.dto.ParsedInfoDto;
 import telran.java47.communication.dto.ParserRequestForTwelveDataDto;
-import telran.java47.communication.dto.ParserRequestForYahooDto;
 import telran.java47.communication.dto.PeriodBeetwinDto;
 import telran.java47.communication.dto.PeriodBeetwinIfoDto;
 import telran.java47.communication.dto.TimeHistoryLimitsForIndexDto;
 import telran.java47.communication.dto.TwelveDataSymbolListDto;
 import telran.java47.communication.dto.ValueCloseBeetwinDto;
-import telran.java47.communication.dto.ValueDto;
 import telran.java47.fintech.dao.StockRepository;
 import telran.java47.fintech.model.StockKey;
 import telran.java47.fintech.model.Stock;
 import telran.java47.fintech.model.TimeHistoryLimitsForIndex;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
-
-import org.springframework.context.support.StaticApplicationContext;
-import org.aspectj.weaver.NewConstructorTypeMunger;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.StreamingHttpOutputMessage.Body;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
@@ -231,7 +213,8 @@ public class CommunicationServiceImpl implements CommunicationService {
 	}
 
 	@Override
-	public ParsedInfoDto parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData) {
+//	public ParsedInfoDto parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData) {
+	public boolean parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData) {
 		for (int i = 0; i <= parserRequestForTwelveData.getSource().length-1; i++) {
 			prevStockDate =  parserRequestForTwelveData.getToData();
 			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + "/time_series")				
@@ -273,7 +256,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 	}
 //		return 
 		
-		return null;
+		return true;
 	}
 
 	@Override

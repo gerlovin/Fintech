@@ -46,8 +46,7 @@ public interface CommunicationService {
 	TimeHistoryLimitsForIndexDto findTimeLimitsByIdInDB(String id);
 	
 	String testReq(String name);
-	List<ParsedInfoDto> parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData);
-	ParsedInfoDto parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData);
+	boolean parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData);
 
 	
 }
