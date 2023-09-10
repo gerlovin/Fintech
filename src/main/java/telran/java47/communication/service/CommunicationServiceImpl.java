@@ -344,6 +344,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 				.queryParam("symbol", parserRequestForTwelveData.getSource()[i])
 				.queryParam("apikey", API_KEY);
 		RequestEntity<String> request = new RequestEntity<>(HttpMethod.GET,builder.build().toUri());
+		System.out.println("source :" + parserRequestForTwelveData.getSource()[i]);
 		ResponseEntity <ParsedInfoDto> response = restTemplate.exchange(request, ParsedInfoDto.class);
 		System.out.println("response :" + response.getBody());
 		ParsedInfoDto newData = response.getBody();

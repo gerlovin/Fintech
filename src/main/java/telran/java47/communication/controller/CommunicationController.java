@@ -10,16 +10,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
 import lombok.RequiredArgsConstructor;
 import telran.java47.communication.dto.AllApyIncomeDto;
 import telran.java47.communication.dto.ApyIncomDto;
 import telran.java47.communication.dto.CalcSumPackageDto;
 import telran.java47.communication.dto.CorrelationDto;
 import telran.java47.communication.dto.IrrIncomeDto;
-import telran.java47.communication.dto.OldParsedInfoDto;
-import telran.java47.communication.dto.ParsedInfoDto;
 import telran.java47.communication.dto.ParserRequestForTwelveDataDto;
-import telran.java47.communication.dto.ParserRequestForYahooDto;
 import telran.java47.communication.dto.PeriodBeetwinDto;
 import telran.java47.communication.dto.PeriodBeetwinIfoDto;
 import telran.java47.communication.dto.TimeHistoryLimitsForIndexDto;
