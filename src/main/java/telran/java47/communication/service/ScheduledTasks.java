@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.mapping.Array;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -28,9 +29,9 @@ public class ScheduledTasks {
 			packageRepository.deleteAll(listNameAmounts);
 		}
 	}
-	@Scheduled(cron = "0 0 1 * * ?")
+	@Scheduled(cron = "0 56 21 * * ?")
 	public void LoadNewData() {
 		String [] indexes =communicationService.getAllIndexes();
-		communicationService.parsing(new ParserRequestForTwelveDataDto(indexes, LocalDate.now().minusDays(1), LocalDate.now().minusDays(1), "1day"));				
+		communicationService.parsing(new ParserRequestForTwelveDataDto(indexes, LocalDate.now().minusDays(2), LocalDate.now(), "1day"));				
 	}
 }

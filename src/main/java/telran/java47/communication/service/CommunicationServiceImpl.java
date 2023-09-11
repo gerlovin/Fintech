@@ -69,13 +69,14 @@ public class CommunicationServiceImpl implements CommunicationService {
 //				.build();
 //		HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 //		System.out.println(response.body());
-		URI uri = URI.create("https://api.twelvedata.com/earliest_timestamp?symbol=" + id + "&interval=1day&outputsize=30&apikey=" + API_KEY);
+		URI uri = URI.create("https://api.twelvedata.com/earliest_timestamp?symbol=" + id
+				+ "&interval=1day&outputsize=30&apikey=" + API_KEY);
 //		HttpHeaders headers = new HttpHeaders();
 //		headers.add("X-RapidAPI-Key", "324c69fb60msh93f7cf5cb241a94p12eb0bjsn5863365f3ef9");
 //	    headers.add("X-RapidAPI-Host", "twelve-data1.p.rapidapi.com");
 		RequestEntity<String> request = new RequestEntity<>(HttpMethod.GET, uri);
-		ResponseEntity<EarlestTimestampDto> response = restTemplate.exchange(request,EarlestTimestampDto.class);	
-		TimeHistoryLimitsForIndexDto result= new TimeHistoryLimitsForIndexDto();
+		ResponseEntity<EarlestTimestampDto> response = restTemplate.exchange(request, EarlestTimestampDto.class);
+		TimeHistoryLimitsForIndexDto result = new TimeHistoryLimitsForIndexDto();
 		result.setSource(id);
 		result.setToData(LocalDate.now());
 		result.setFromData(response.getBody().getDatetime());
@@ -125,11 +126,12 @@ public class CommunicationServiceImpl implements CommunicationService {
 	@Override
 	public List<PeriodBeetwinIfoDto> periodBeetwin(PeriodBeetwinDto periodBeetwinDto) {
 		List<PeriodBeetwinIfoDto> resultList = new ArrayList<>();
-		
+
 		PeriodBeetwinIfoDto pbInfoDto;
 		System.out.println(periodBeetwinDto.toString());
 		for (int i = 0; i < periodBeetwinDto.getIndexes().length; i++) {
-			String info = stockRepository.periodInfo(periodBeetwinDto.getIndexes()[i], periodBeetwinDto.getType(), periodBeetwinDto.getQuantity(), periodBeetwinDto.getFrom(), periodBeetwinDto.getTo());
+			String info = stockRepository.periodInfo(periodBeetwinDto.getIndexes()[i], periodBeetwinDto.getType(),
+					periodBeetwinDto.getQuantity(), periodBeetwinDto.getFrom(), periodBeetwinDto.getTo());
 			if (info != null) {
 				System.out.println(info);
 				String[] infoData = info.split(",");
@@ -146,32 +148,31 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 	@Override
 	public ArrayList<ValueCloseBeetwinDto> valueCloseBeetwin(PeriodBeetwinDto periodBeetwinDto) {
-		
+
 		String source = periodBeetwinDto.getIndexes()[0];
 		LocalDate minDate = periodBeetwinDto.getFrom();
 		LocalDate maxDate = periodBeetwinDto.getTo();
-		List<Stock> stocks = stockRepository.findByStockKeyNameIgnoreCaseStockKeyDateStockBetween(source, minDate, maxDate);
-		
-		
+		List<Stock> stocks = stockRepository.findByStockKeyNameIgnoreCaseStockKeyDateStockBetween(source, minDate,
+				maxDate);
+
 		String typeS = String.valueOf(periodBeetwinDto.getQuantity()) + ' ' + periodBeetwinDto.getType();
-		
+
 		TemporalUnit temporalUnit = getPeriodUnit(periodBeetwinDto.getType().toUpperCase());
-		
-		ArrayList<ValueCloseBeetwinDto> valuesReturnList  =  stocks.stream()
-			.filter(s -> s.getWorkDayOrNot().equals(Boolean.TRUE))
-			.map(s -> new ValueCloseBeetwinDto(s.getStockKey().getDateStock(), 
-					s.getStockKey().getDateStock().plus(periodBeetwinDto.getQuantity(), temporalUnit), 
-					source, typeS, minDate, maxDate, s.getCloseV(), 0, 0, new ArrayList<Double>()))
-			.filter(v -> v.getTo().isBefore( v.getMaxDate().plusDays(1)))
-			.collect(Collectors.toCollection(ArrayList::new));
-		
+
+		ArrayList<ValueCloseBeetwinDto> valuesReturnList = stocks.stream()
+				.filter(s -> s.getWorkDayOrNot().equals(Boolean.TRUE))
+				.map(s -> new ValueCloseBeetwinDto(s.getStockKey().getDateStock(),
+						s.getStockKey().getDateStock().plus(periodBeetwinDto.getQuantity(), temporalUnit), source,
+						typeS, minDate, maxDate, s.getCloseV(), 0, 0, new ArrayList<Double>()))
+				.filter(v -> v.getTo().isBefore(v.getMaxDate().plusDays(1)))
+				.collect(Collectors.toCollection(ArrayList::new));
+
 		Map<LocalDate, Double> mapClosesMap = stocks.stream()
-					.collect(Collectors.toMap(s -> s.getStockKey().getDateStock(), s -> s.getCloseV()));
-		
+				.collect(Collectors.toMap(s -> s.getStockKey().getDateStock(), s -> s.getCloseV()));
+
 		LocalDate maxDate1;
 		LocalDate dateCur;
 
-		
 		for (ValueCloseBeetwinDto vCDto : valuesReturnList) {
 			dateCur = vCDto.getFrom();
 			maxDate1 = vCDto.getTo();
@@ -192,24 +193,21 @@ public class CommunicationServiceImpl implements CommunicationService {
 	@Override
 	public PeriodBeetwinIfoDto calcSumPackage(CalcSumPackageDto calcSumPackageDto) {
 		LocalDateTime timePackage = LocalDateTime.now();
-		Double idPackage = Math.random(); 
-		
+		Double idPackage = Math.random();
+
 		for (int i = 0; i < calcSumPackageDto.getIndexes().size(); i++) {
 			NameAmount nameAmount = new NameAmount(Long.valueOf(0), idPackage, timePackage,
-					calcSumPackageDto.getIndexes().get(i), 
-					calcSumPackageDto.getAmount().get(i));
+					calcSumPackageDto.getIndexes().get(i), calcSumPackageDto.getAmount().get(i));
 			packageRepository.save(nameAmount);
 		}
 		packageRepository.flush();
-		String info = stockRepository.calcSumPackage(idPackage, timePackage, 
-				calcSumPackageDto.getType(), calcSumPackageDto.getQuantity(),
-				calcSumPackageDto.getFrom(), calcSumPackageDto.getTo());
+		String info = stockRepository.calcSumPackage(idPackage, timePackage, calcSumPackageDto.getType(),
+				calcSumPackageDto.getQuantity(), calcSumPackageDto.getFrom(), calcSumPackageDto.getTo());
 		System.out.println(info);
 		PeriodBeetwinIfoDto pbInfoDto = null;
 		if (info != null) {
-			String concatenatedNames = calcSumPackageDto.getIndexes().stream()
-					  .collect(Collectors.joining(", "));
-				
+			String concatenatedNames = calcSumPackageDto.getIndexes().stream().collect(Collectors.joining(", "));
+
 			String[] infoData = info.split(",");
 			pbInfoDto = new PeriodBeetwinIfoDto(calcSumPackageDto.getFrom(), calcSumPackageDto.getTo(),
 					"Package for: " + concatenatedNames,
@@ -224,20 +222,22 @@ public class CommunicationServiceImpl implements CommunicationService {
 	@Transactional
 	public ApyIncomDto calcIncomeApy(PeriodBeetwinDto periodBeetwinDto) {
 		double periodYears = getPeriodInYears(periodBeetwinDto.getType().toUpperCase(), periodBeetwinDto.getQuantity());
-		ArrayList<DimensionProcedure>  dimensionList = dimensionRepository.incomeWithAPI(periodBeetwinDto.getIndexes()[0], periodBeetwinDto.getType(), periodBeetwinDto.getQuantity(), periodYears, periodBeetwinDto.getFrom(), periodBeetwinDto.getTo());
+		ArrayList<DimensionProcedure> dimensionList = dimensionRepository.incomeWithAPI(
+				periodBeetwinDto.getIndexes()[0], periodBeetwinDto.getType(), periodBeetwinDto.getQuantity(),
+				periodYears, periodBeetwinDto.getFrom(), periodBeetwinDto.getTo());
 
 		IncomeApyDto minApyDto = createIncomeApyDtoFromDimensionProcedure(dimensionList.get(0));
 		IncomeApyDto maxApyDto = createIncomeApyDtoFromDimensionProcedure(dimensionList.get(1));
 		String typeS = String.valueOf(periodBeetwinDto.getQuantity()) + ' ' + periodBeetwinDto.getType();
-		
-		return new ApyIncomDto(periodBeetwinDto.getFrom(), periodBeetwinDto.getTo(), 
-				periodBeetwinDto.getIndexes(), typeS, minApyDto, maxApyDto);
+
+		return new ApyIncomDto(periodBeetwinDto.getFrom(), periodBeetwinDto.getTo(), periodBeetwinDto.getIndexes(),
+				typeS, minApyDto, maxApyDto);
 	}
 
 	private IncomeApyDto createIncomeApyDtoFromDimensionProcedure(DimensionProcedure dim) {
-		
-		return new IncomeApyDto(dim.getDateOfPurchase(), dim.getPurchaseAmount(), 
-					dim.getDateOfSale(), dim.getSaleAmount(), dim.getIncome(), dim.getDimension());
+
+		return new IncomeApyDto(dim.getDateOfPurchase(), dim.getPurchaseAmount(), dim.getDateOfSale(),
+				dim.getSaleAmount(), dim.getIncome(), dim.getDimension());
 	}
 
 	@Override
@@ -248,8 +248,10 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 	@Override
 	public String correlation(CorrelationDto correlationDto) {
-		return  stockRepository.correlationCalc(correlationDto.getIndexes()[0].toUpperCase(), 
-				correlationDto.getIndexes()[1].toUpperCase(), correlationDto.getFrom(), correlationDto.getTo()).toString();		
+		return stockRepository
+				.correlationCalc(correlationDto.getIndexes()[0].toUpperCase(),
+						correlationDto.getIndexes()[1].toUpperCase(), correlationDto.getFrom(), correlationDto.getTo())
+				.toString();
 	}
 
 	@Override
@@ -259,33 +261,32 @@ public class CommunicationServiceImpl implements CommunicationService {
 		LocalDate maxDate = periodBeetwinDto.getTo();
 
 		System.out.println(periodBeetwinDto.toString());
-		List<Stock> stocks = stockRepository.findByStockKeyNameIgnoreCaseStockKeyDateStockBetween(source, minDate, maxDate);
+		List<Stock> stocks = stockRepository.findByStockKeyNameIgnoreCaseStockKeyDateStockBetween(source, minDate,
+				maxDate);
 		System.out.println(stocks.size());
-		
+
 		String typeS = String.valueOf(periodBeetwinDto.getQuantity()) + ' ' + periodBeetwinDto.getType();
 		double yearsCount = getPeriodInYears(periodBeetwinDto.getType().toUpperCase(), periodBeetwinDto.getQuantity());
 		System.out.println(yearsCount);
 		TemporalUnit temporalUnit = getPeriodUnit(periodBeetwinDto.getType().toUpperCase());
-		
-		ArrayList<AllApyIncomeDto> valuesReturnList  =  stocks.stream()
-				.filter(s -> s.getWorkDayOrNot().equals(Boolean.TRUE))
-				.filter(s -> s.getCloseV()!=null)
-				.map(s -> new AllApyIncomeDto(source, minDate, maxDate, typeS, 
-						s.getStockKey().getDateStock(), s.getStockKey().getDateStock().plus(periodBeetwinDto.getQuantity(), temporalUnit),
-						s.getCloseV(), Double.valueOf(0), Double.valueOf(0), Double.valueOf(0)) )
-				.filter(v -> v.getTo().isBefore( v.getHistoryTo().plusDays(1)))
+
+		ArrayList<AllApyIncomeDto> valuesReturnList = stocks.stream()
+				.filter(s -> s.getWorkDayOrNot().equals(Boolean.TRUE)).filter(s -> s.getCloseV() != null)
+				.map(s -> new AllApyIncomeDto(source, minDate, maxDate, typeS, s.getStockKey().getDateStock(),
+						s.getStockKey().getDateStock().plus(periodBeetwinDto.getQuantity(), temporalUnit),
+						s.getCloseV(), Double.valueOf(0), Double.valueOf(0), Double.valueOf(0)))
+				.filter(v -> v.getTo().isBefore(v.getHistoryTo().plusDays(1)))
 				.collect(Collectors.toCollection(ArrayList::new));
-			
-			Map<LocalDate, Double> mapClosesMap = stocks.stream()
-					.filter(s -> s.getCloseV()!=null)
-					.collect(Collectors.toMap(s -> s.getStockKey().getDateStock(), s -> s.getCloseV()));
-			
-		valuesReturnList.stream()
-			.forEach(v -> {v.setSaleAmount(mapClosesMap.get(v.getTo())); 
-						v.setIncome(v.getSaleAmount() - v.getPurchaseAmount());	
-						v.setApy((Math.pow(v.getSaleAmount()/v.getPurchaseAmount(), 1/yearsCount) - 1) *100);
-						});
-			
+
+		Map<LocalDate, Double> mapClosesMap = stocks.stream().filter(s -> s.getCloseV() != null)
+				.collect(Collectors.toMap(s -> s.getStockKey().getDateStock(), s -> s.getCloseV()));
+
+		valuesReturnList.stream().forEach(v -> {
+			v.setSaleAmount(mapClosesMap.get(v.getTo()));
+			v.setIncome(v.getSaleAmount() - v.getPurchaseAmount());
+			v.setApy((Math.pow(v.getSaleAmount() / v.getPurchaseAmount(), 1 / yearsCount) - 1) * 100);
+		});
+
 		return valuesReturnList;
 	}
 
@@ -293,11 +294,11 @@ public class CommunicationServiceImpl implements CommunicationService {
 		int daysInYear = LocalDate.of(LocalDate.now().getYear(), 1, 1).minusDays(1).getDayOfYear();
 		switch (periodString) {
 		case "DAYS":
-			return i/daysInYear;
+			return i / daysInYear;
 		case "WEEKS":
-			return i/(daysInYear/7);
+			return i / (daysInYear / 7);
 		case "MONTHS":
-			return i/12;
+			return i / 12;
 		case "YEARS":
 			return i;
 		default:
@@ -335,48 +336,52 @@ public class CommunicationServiceImpl implements CommunicationService {
 	@Override
 //	public ParsedInfoDto parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData) {
 	public boolean parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData) {
-		for (int i = 0; i <= parserRequestForTwelveData.getSource().length-1; i++) {
-			prevStockDate =  parserRequestForTwelveData.getToData();
-			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + "/time_series")				
-				.queryParam("end_date", parserRequestForTwelveData.getToData())
-				.queryParam("start_date", parserRequestForTwelveData.getFromData())
-				.queryParam("interval", parserRequestForTwelveData.getType())
-				.queryParam("symbol", parserRequestForTwelveData.getSource()[i])
-				.queryParam("apikey", API_KEY);
-		RequestEntity<String> request = new RequestEntity<>(HttpMethod.GET,builder.build().toUri());
-		System.out.println("source :" + parserRequestForTwelveData.getSource()[i]);
-		ResponseEntity <ParsedInfoDto> response = restTemplate.exchange(request, ParsedInfoDto.class);
-		System.out.println("response :" + response.getBody());
-		ParsedInfoDto newData = response.getBody();
-		Arrays.stream(newData.getValues())
-		             .map(
-		                 s -> new Stock(new StockKey(newData.getMeta().getSymbol(), s.getDatetime()),
-		            	 s.getOpen(),s.getHigh(),s.getLow(),s.getClose(),s.getClose(),s.getVolume(), true)
-		            	 )
-				.forEach(s -> {
-					System.out.println("in forEach");
-					if (s.getStockKey().getDateStock().plusDays(1).isBefore(prevStockDate)) {
-						System.out.println("in if");
-						LocalDate currentStockDate = s.getStockKey().getDateStock();
-						while (currentStockDate.isBefore(prevStockDate)) 
-						{
-						System.out.println(prevStockDate + "prev in while");
-						System.out.println(currentStockDate.plusDays(1) + "s + 1 in while");
-						prevStockDate = prevStockDate.minusDays(1);
-						s.setStockKey(new StockKey(newData.getMeta().getSymbol(),prevStockDate));
-						if (currentStockDate.isEqual(prevStockDate)) {s.setWorkDayOrNot(true);}
-						else s.setWorkDayOrNot(false);
-						stockRepository.save(s);
-						
-						}
-					} else {
-					stockRepository.save(s);
-					prevStockDate = s.getStockKey().getDateStock();
-					System.out.println(prevStockDate);
-				}});
-	}
+		for (int i = 0; i <= parserRequestForTwelveData.getSource().length - 1; i++) {
+			prevStockDate = parserRequestForTwelveData.getToData();
+			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + "/time_series")
+					.queryParam("end_date", parserRequestForTwelveData.getToData())
+					.queryParam("start_date", parserRequestForTwelveData.getFromData())
+					.queryParam("interval", parserRequestForTwelveData.getType())
+					.queryParam("symbol", parserRequestForTwelveData.getSource()[i])
+					.queryParam("apikey", API_KEY);
+			RequestEntity<String> request = new RequestEntity<>(HttpMethod.GET, builder.build().toUri());
+			System.out.println("source :" + parserRequestForTwelveData.getSource()[i]);
+			ResponseEntity<ParsedInfoDto> response = restTemplate.exchange(request, ParsedInfoDto.class);
+			System.out.println("response :" + response.getBody());
+			ParsedInfoDto newData = response.getBody();
+			System.out.println(newData.getValues().toString());
+			if (newData.getValues() != null) {
+				System.out.println("In if");
+				Arrays.stream(newData.getValues()).filter(s -> s != null)
+						.map(s -> new Stock(new StockKey(newData.getMeta().getSymbol(), s.getDatetime()), s.getOpen(),
+								s.getHigh(), s.getLow(), s.getClose(), s.getClose(), s.getVolume(), true))
+						.forEach(s -> {
+							System.out.println("in forEach");
+							if (s.getStockKey().getDateStock().plusDays(1).isBefore(prevStockDate)) {
+								System.out.println("in if");
+								LocalDate currentStockDate = s.getStockKey().getDateStock();
+								while (currentStockDate.isBefore(prevStockDate)) {
+									System.out.println(prevStockDate + "prev in while");
+									System.out.println(currentStockDate.plusDays(1) + "s + 1 in while");
+									prevStockDate = prevStockDate.minusDays(1);
+									s.setStockKey(new StockKey(newData.getMeta().getSymbol(), prevStockDate));
+									if (currentStockDate.isEqual(prevStockDate)) {
+										s.setWorkDayOrNot(true);
+									} else
+										s.setWorkDayOrNot(false);
+									stockRepository.save(s);
+
+								}
+							} else {
+								stockRepository.save(s);
+								prevStockDate = s.getStockKey().getDateStock();
+								System.out.println(prevStockDate);
+							}
+						});
+			}
+		}
 //		return 
-		
+
 		return true;
 	}
 
@@ -389,8 +394,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 	@Override
 	public String testReq(String name) {
 		List<NameAmount> listNameAmounts = packageRepository.findByTimePackageIsBefore(LocalDateTime.now());
-		listNameAmounts.stream()
-			.forEach(s -> System.out.println(s));
+		listNameAmounts.stream().forEach(s -> System.out.println(s));
 		System.out.println(listNameAmounts.size());
 		return null;
 	}
