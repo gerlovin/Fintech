@@ -36,4 +36,6 @@ public interface StockRepository extends JpaRepository<Stock, StockKey> {
 	@Procedure("CalcSumPackage")
 	String calcSumPackage(Double idPackage, LocalDateTime timePackage, String typePeriod, int lenghtPeriod, LocalDate dateFrom, LocalDate dateTo);
 
+	@Query("Select DISTINCT s.stockKey.name from Stock s")
+	List<String> findDistinctByStockKeyName();
 }

@@ -43,6 +43,7 @@ import java.time.temporal.ChronoUnit;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
+import java.time.temporal.TemporalUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -111,6 +112,12 @@ public class CommunicationServiceImpl implements CommunicationService {
 		ResponseEntity<TwelveDataSymbolListDto> response = restTemplate.exchange(request,
 				TwelveDataSymbolListDto.class);
 		return Arrays.stream(response.getBody().getData()).map(s -> s.getSymbol()).toArray(String[]::new);
+	}
+	
+	@Override
+	public String[] getAllIndexesBD() {
+		
+		return stockRepository.findDistinctByStockKeyName().stream().toArray(String[]::new);
 	}
 
 	@Override
