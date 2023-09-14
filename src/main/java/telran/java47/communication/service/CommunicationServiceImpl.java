@@ -2,6 +2,7 @@ package telran.java47.communication.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import telran.java47.communication.dto.AllApyIncomeDto;
 import telran.java47.communication.dto.ApyIncomDto;
 import telran.java47.communication.dto.CalcSumPackageDto;
@@ -20,6 +22,7 @@ import telran.java47.communication.dto.CorrelationDto;
 import telran.java47.communication.dto.EarlestTimestampDto;
 import telran.java47.communication.dto.IncomeApyDto;
 import telran.java47.communication.dto.IrrIncomeDto;
+import telran.java47.communication.dto.ListParsedInfoDto;
 import telran.java47.communication.dto.ParsedInfoDto;
 import telran.java47.communication.dto.ParserRequestForTwelveDataDto;
 import telran.java47.communication.dto.PeriodBeetwinDto;
@@ -37,6 +40,7 @@ import telran.java47.fintech.model.Stock;
 import telran.java47.fintech.model.TimeHistoryLimitsForIndex;
 
 import java.net.URI;
+import java.text.DateFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -336,51 +340,65 @@ public class CommunicationServiceImpl implements CommunicationService {
 	@Override
 //	public ParsedInfoDto parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData) {
 	public boolean parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData) {
-		for (int i = 0; i <= parserRequestForTwelveData.getSource().length - 1; i++) {
-			prevStockDate = parserRequestForTwelveData.getToData();
+		HashMap<String, ParsedInfoDto> mapStocks = new HashMap<String, ParsedInfoDto>();
+		String symbols =parserRequestForTwelveData.getSource()[0];
+		for (int i = 1; i <= parserRequestForTwelveData.getSource().length - 1; i++) {
+			symbols = symbols + "," + parserRequestForTwelveData.getSource()[i];
+		}
+//			prevStockDate = parserRequestForTwelveData.getToData();
 			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + "/time_series")
 					.queryParam("end_date", parserRequestForTwelveData.getToData())
 					.queryParam("start_date", parserRequestForTwelveData.getFromData())
 					.queryParam("interval", parserRequestForTwelveData.getType())
-					.queryParam("symbol", parserRequestForTwelveData.getSource()[i])
+					.queryParam("symbol", symbols)
 					.queryParam("apikey", API_KEY);
 			RequestEntity<String> request = new RequestEntity<>(HttpMethod.GET, builder.build().toUri());
-			System.out.println("source :" + parserRequestForTwelveData.getSource()[i]);
-			ResponseEntity<ParsedInfoDto> response = restTemplate.exchange(request, ParsedInfoDto.class);
-			System.out.println("response :" + response.getBody());
-			ParsedInfoDto newData = response.getBody();
-			System.out.println(newData.getValues().toString());
-			if (newData.getValues() != null) {
-				System.out.println("In if");
-				Arrays.stream(newData.getValues()).filter(s -> s != null)
-						.map(s -> new Stock(new StockKey(newData.getMeta().getSymbol(), s.getDatetime()), s.getOpen(),
-								s.getHigh(), s.getLow(), s.getClose(), s.getClose(), s.getVolume(), true))
-						.forEach(s -> {
-							System.out.println("in forEach");
-							if (s.getStockKey().getDateStock().plusDays(1).isBefore(prevStockDate)) {
-								System.out.println("in if");
-								LocalDate currentStockDate = s.getStockKey().getDateStock();
-								while (currentStockDate.isBefore(prevStockDate)) {
-									System.out.println(prevStockDate + "prev in while");
-									System.out.println(currentStockDate.plusDays(1) + "s + 1 in while");
-									prevStockDate = prevStockDate.minusDays(1);
-									s.setStockKey(new StockKey(newData.getMeta().getSymbol(), prevStockDate));
-									if (currentStockDate.isEqual(prevStockDate)) {
-										s.setWorkDayOrNot(true);
-									} else
-										s.setWorkDayOrNot(false);
-									stockRepository.save(s);
-
-								}
-							} else {
-								stockRepository.save(s);
-								prevStockDate = s.getStockKey().getDateStock();
-								System.out.println(prevStockDate);
-							}
-						});
-			}
-		}
-//		return 
+			System.out.println("source :" + symbols);
+			ResponseEntity<? extends HashMap> response = restTemplate.exchange(request, mapStocks.getClass());
+			System.out.println("response :" + response.getBody().toString());
+			mapStocks = response.getBody();
+			mapStocks.entrySet().stream()
+			                    .forEach(en -> Arrays.stream(en.getValue().getValues())
+			                    		                    .map(s -> new Stock(new StockKey(en.getKey(), s.getDatetime()), s.getOpen(),
+			                    									s.getHigh(), s.getLow(), s.getClose(), s.getClose(), s.getVolume(), true))
+			                    		    				.forEach(s -> stockRepository.save(s)
+			                    		                    )
+			                    );
+//			ListParsedInfoDto newData = response.getBody();
+//			newData.getMapStocks().entrySet();
+//			
+//			System.out.println(newData.getValues().toString());
+//			if (newData.getValues() != null) {
+//				System.out.println("In if");
+//				Arrays.stream(newData.getValues()).filter(s -> s != null)
+//						.map(s -> new Stock(new StockKey(newData.getMeta().getSymbol(), s.getDatetime()), s.getOpen(),
+//								s.getHigh(), s.getLow(), s.getClose(), s.getClose(), s.getVolume(), true))
+//						.forEach(s -> {
+//							System.out.println("in forEach");
+//							if (s.getStockKey().getDateStock().plusDays(1).isBefore(prevStockDate)) {
+//								System.out.println("in if");
+//								LocalDate currentStockDate = s.getStockKey().getDateStock();
+//								while (currentStockDate.isBefore(prevStockDate)) {
+//									System.out.println(prevStockDate + "prev in while");
+//									System.out.println(currentStockDate.plusDays(1) + "s + 1 in while");
+//									prevStockDate = prevStockDate.minusDays(1);
+//									s.setStockKey(new StockKey(newData.getMeta().getSymbol(), prevStockDate));
+//									if (currentStockDate.isEqual(prevStockDate)) {
+//										s.setWorkDayOrNot(true);
+//									} else
+//										s.setWorkDayOrNot(false);
+//									stockRepository.save(s);
+//
+//								}
+//							} else {
+//								stockRepository.save(s);
+//								prevStockDate = s.getStockKey().getDateStock();
+//								System.out.println(prevStockDate);
+//							}
+//						});
+//			}
+//		}
+////		return 
 
 		return true;
 	}
