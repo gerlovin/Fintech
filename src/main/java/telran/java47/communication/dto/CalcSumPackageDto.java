@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CalcSumPackageDto {
-	ArrayList<String> indexes;
+	ArrayList<String> indices;
 	ArrayList<Integer> amount;
     LocalDate from;
     LocalDate to;

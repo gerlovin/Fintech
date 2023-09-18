@@ -19,9 +19,9 @@ public interface CommunicationService {
 		
 	TimeHistoryLimitsForIndexDto findTimeLimitsById(String id) throws Exception, InterruptedException;
 
-	String[] getAllIndexes();
+	String[] getAllIndices();
 	
-	String[] getAllIndexesBD();
+	String[] getAllIndicesBD();
 
 	List<PeriodBeetwinIfoDto> periodBeetwin(PeriodBeetwinDto periodBeetwinDto); 
 

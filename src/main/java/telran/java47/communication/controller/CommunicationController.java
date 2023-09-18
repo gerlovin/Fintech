@@ -45,14 +45,14 @@ public class CommunicationController {
 	
 	@GetMapping("communication/index")
 	@CrossOrigin(origins = "*") 
-	public String[] getAllIndexes() {
-		return communicationService.getAllIndexes();
+	public String[] getAllIndices() {
+		return communicationService.getAllIndices();
 	}
 	
 	@GetMapping("communication/indexBD")
 	@CrossOrigin(origins = "*") 
-	public String[] getAllIndexesBD() {
-		return communicationService.getAllIndexesBD();
+	public String[] getAllIndicesBD() {
+		return communicationService.getAllIndicesBD();
 	}
 	
 	@GetMapping("/communication/index/{id}")

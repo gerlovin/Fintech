@@ -18,7 +18,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class PeriodBeetwinDto {
-	String[] indexes;
+	String[] indices;
     String type;
     int quantity;
 	LocalDate from;

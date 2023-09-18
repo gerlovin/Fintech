@@ -79,7 +79,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 
 	@Override
-	public String[] getAllIndexes() {
+	public String[] getAllIndices() {
 		URI uri = URI.create("https://api.twelvedata.com/stocks?exchange=NASDAQ&apikey=" + API_KEY);
 		RequestEntity<String> request = new RequestEntity<>(HttpMethod.GET, uri);
 		ResponseEntity<TwelveDataSymbolListDto> response = restTemplate.exchange(request,
@@ -88,7 +88,8 @@ public class CommunicationServiceImpl implements CommunicationService {
 	}
 	
 	@Override
-	public String[] getAllIndexesBD() {		
+	public String[] getAllIndicesBD() {
+		
 		return stockRepository.findDistinctByStockKeyName().stream().toArray(String[]::new);
 	}
 
@@ -98,14 +99,13 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 		PeriodBeetwinIfoDto pbInfoDto;
 		System.out.println(periodBeetwinDto.toString());
-		for (int i = 0; i < periodBeetwinDto.getIndexes().length; i++) {
-			String info = stockRepository.periodInfo(periodBeetwinDto.getIndexes()[i], periodBeetwinDto.getType(),
-					periodBeetwinDto.getQuantity(), periodBeetwinDto.getFrom(), periodBeetwinDto.getTo());
+		for (int i = 0; i < periodBeetwinDto.getIndices().length; i++) {
+			String info = stockRepository.periodInfo(periodBeetwinDto.getIndices()[i], periodBeetwinDto.getType(), periodBeetwinDto.getQuantity(), periodBeetwinDto.getFrom(), periodBeetwinDto.getTo());
 			if (info != null) {
 				System.out.println(info);
 				String[] infoData = info.split(",");
 				pbInfoDto = new PeriodBeetwinIfoDto(periodBeetwinDto.getFrom(), periodBeetwinDto.getTo(),
-						periodBeetwinDto.getIndexes()[i],
+						periodBeetwinDto.getIndices()[i],
 						String.valueOf(periodBeetwinDto.getQuantity()) + ' ' + periodBeetwinDto.getType(),
 						Double.valueOf(infoData[0]), Double.valueOf(infoData[1]), Double.valueOf(infoData[2]),
 						Double.valueOf(infoData[3]), Double.valueOf(infoData[4]));
@@ -117,8 +117,8 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 	@Override
 	public ArrayList<ValueCloseBeetwinDto> valueCloseBeetwin(PeriodBeetwinDto periodBeetwinDto) {
-
-		String source = periodBeetwinDto.getIndexes()[0];
+		
+		String source = periodBeetwinDto.getIndices()[0];
 		LocalDate minDate = periodBeetwinDto.getFrom();
 		LocalDate maxDate = periodBeetwinDto.getTo();
 		List<Stock> stocks = stockRepository.findByStockKeyNameIgnoreCaseStockKeyDateStockBetween(source, minDate,
@@ -127,15 +127,18 @@ public class CommunicationServiceImpl implements CommunicationService {
 		String typeS = String.valueOf(periodBeetwinDto.getQuantity()) + ' ' + periodBeetwinDto.getType();
 
 		TemporalUnit temporalUnit = getPeriodUnit(periodBeetwinDto.getType().toUpperCase());
-
-		ArrayList<ValueCloseBeetwinDto> valuesReturnList = stocks.stream()
-				.filter(s -> s.getWorkDayOrNot().equals(Boolean.TRUE))
-				.map(s -> new ValueCloseBeetwinDto(s.getStockKey().getDateStock(),
-						s.getStockKey().getDateStock().plus(periodBeetwinDto.getQuantity(), temporalUnit), source,
-						typeS, minDate, maxDate, s.getCloseV(), 0, 0, new ArrayList<Double>()))
-				.filter(v -> v.getTo().isBefore(v.getMaxDate().plusDays(1)))
-				.collect(Collectors.toCollection(ArrayList::new));
-
+		
+		ArrayList<ValueCloseBeetwinDto> valuesReturnList  =  stocks.stream()
+			.filter(s -> s.getWorkDayOrNot().equals(Boolean.TRUE))
+			.map(s -> new ValueCloseBeetwinDto(minDate, 
+					maxDate, 
+					source, typeS, 
+					s.getStockKey().getDateStock(), 
+					s.getStockKey().getDateStock().plus(periodBeetwinDto.getQuantity(), temporalUnit), 
+					s.getCloseV(), 0, 0, new ArrayList<Double>()))
+			.filter(v -> v.getTo().isBefore( v.getMaxDate().plusDays(1)))
+			.collect(Collectors.toCollection(ArrayList::new));
+		
 		Map<LocalDate, Double> mapClosesMap = stocks.stream()
 				.collect(Collectors.toMap(s -> s.getStockKey().getDateStock(), s -> s.getCloseV()));
 
@@ -163,11 +166,12 @@ public class CommunicationServiceImpl implements CommunicationService {
 	@Override
 	public PeriodBeetwinIfoDto calcSumPackage(CalcSumPackageDto calcSumPackageDto) {
 		LocalDateTime timePackage = LocalDateTime.now();
-		Double idPackage = Math.random();
-
-		for (int i = 0; i < calcSumPackageDto.getIndexes().size(); i++) {
+		Double idPackage = Math.random(); 
+		
+		for (int i = 0; i < calcSumPackageDto.getIndices().size(); i++) {
 			NameAmount nameAmount = new NameAmount(Long.valueOf(0), idPackage, timePackage,
-					calcSumPackageDto.getIndexes().get(i), calcSumPackageDto.getAmount().get(i));
+					calcSumPackageDto.getIndices().get(i), 
+					calcSumPackageDto.getAmount().get(i));
 			packageRepository.save(nameAmount);
 		}
 		packageRepository.flush();
@@ -176,8 +180,9 @@ public class CommunicationServiceImpl implements CommunicationService {
 		System.out.println(info);
 		PeriodBeetwinIfoDto pbInfoDto = null;
 		if (info != null) {
-			String concatenatedNames = calcSumPackageDto.getIndexes().stream().collect(Collectors.joining(", "));
-
+			String concatenatedNames = calcSumPackageDto.getIndices().stream()
+					  .collect(Collectors.joining(", "));
+				
 			String[] infoData = info.split(",");
 			pbInfoDto = new PeriodBeetwinIfoDto(calcSumPackageDto.getFrom(), calcSumPackageDto.getTo(),
 					"Package for: " + concatenatedNames,
@@ -192,16 +197,14 @@ public class CommunicationServiceImpl implements CommunicationService {
 	@Transactional
 	public ApyIncomDto calcIncomeApy(PeriodBeetwinDto periodBeetwinDto) {
 		double periodYears = getPeriodInYears(periodBeetwinDto.getType().toUpperCase(), periodBeetwinDto.getQuantity());
-		ArrayList<DimensionProcedure> dimensionList = dimensionRepository.incomeWithAPI(
-				periodBeetwinDto.getIndexes()[0], periodBeetwinDto.getType(), periodBeetwinDto.getQuantity(),
-				periodYears, periodBeetwinDto.getFrom(), periodBeetwinDto.getTo());
+		ArrayList<DimensionProcedure>  dimensionList = dimensionRepository.incomeWithAPI(periodBeetwinDto.getIndices()[0], periodBeetwinDto.getType(), periodBeetwinDto.getQuantity(), periodYears, periodBeetwinDto.getFrom(), periodBeetwinDto.getTo());
 
 		IncomeApyDto minApyDto = createIncomeApyDtoFromDimensionProcedure(dimensionList.get(0));
 		IncomeApyDto maxApyDto = createIncomeApyDtoFromDimensionProcedure(dimensionList.get(1));
 		String typeS = String.valueOf(periodBeetwinDto.getQuantity()) + ' ' + periodBeetwinDto.getType();
-
-		return new ApyIncomDto(periodBeetwinDto.getFrom(), periodBeetwinDto.getTo(), periodBeetwinDto.getIndexes(),
-				typeS, minApyDto, maxApyDto);
+		
+		return new ApyIncomDto(periodBeetwinDto.getFrom(), periodBeetwinDto.getTo(), 
+				periodBeetwinDto.getIndices(), typeS, minApyDto, maxApyDto);
 	}
 
 	private IncomeApyDto createIncomeApyDtoFromDimensionProcedure(DimensionProcedure dim) {
@@ -218,15 +221,13 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 	@Override
 	public String correlation(CorrelationDto correlationDto) {
-		return stockRepository
-				.correlationCalc(correlationDto.getIndexes()[0].toUpperCase(),
-						correlationDto.getIndexes()[1].toUpperCase(), correlationDto.getFrom(), correlationDto.getTo())
-				.toString();
+		return  stockRepository.correlationCalc(correlationDto.getIndices()[0].toUpperCase(), 
+				correlationDto.getIndices()[1].toUpperCase(), correlationDto.getFrom(), correlationDto.getTo()).toString();		
 	}
 
 	@Override
 	public ArrayList<AllApyIncomeDto> calcIncomeAllApy(PeriodBeetwinDto periodBeetwinDto) {
-		String source = periodBeetwinDto.getIndexes()[0];
+		String source = periodBeetwinDto.getIndices()[0];
 		LocalDate minDate = periodBeetwinDto.getFrom();
 		LocalDate maxDate = periodBeetwinDto.getTo();
 

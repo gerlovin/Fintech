@@ -13,7 +13,7 @@ import lombok.ToString;
 @ToString
 public class CorrelationDto {
 	
-	String[] indexes;
+	String[] indices;
 	LocalDate from;
 	LocalDate to;
 }
