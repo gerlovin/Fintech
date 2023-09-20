@@ -99,6 +99,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 		PeriodBeetwinIfoDto pbInfoDto;
 		System.out.println(periodBeetwinDto.toString());
+		long t1 = System.currentTimeMillis();
 		for (int i = 0; i < periodBeetwinDto.getIndices().length; i++) {
 			String info = stockRepository.periodInfo(periodBeetwinDto.getIndices()[i], periodBeetwinDto.getType(), periodBeetwinDto.getQuantity(), periodBeetwinDto.getFrom(), periodBeetwinDto.getTo());
 			if (info != null) {
@@ -112,6 +113,8 @@ public class CommunicationServiceImpl implements CommunicationService {
 				resultList.add(pbInfoDto);
 			}
 		}
+		long t2 = System.currentTimeMillis();
+		System.out.println("Time: " + (t2-t1));
 		return resultList;
 	}
 
