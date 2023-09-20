@@ -43,13 +43,13 @@ public class CommunicationController {
 //		return communicationService.findTimeLimitsById(id);
 //	}
 	
-	@GetMapping("communication/index")
+	@GetMapping("/communication/index")
 	@CrossOrigin(origins = "*") 
 	public String[] getAllIndices() {
 		return communicationService.getAllIndices();
 	}
 	
-	@GetMapping("communication/indexBD")
+	@GetMapping("/communication/indexBD")
 	@CrossOrigin(origins = "*") 
 	public String[] getAllIndicesBD() {
 		return communicationService.getAllIndicesBD();
