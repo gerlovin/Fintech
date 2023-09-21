@@ -12,11 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ParsedInfoDto implements Serializable {
-  /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-MetaDto meta;
-  ValueDto[] values;
-  String status;
+
+	MetaDto meta;
+	ValueDto[] values;
+	String status;
 }

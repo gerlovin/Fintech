@@ -1,0 +1,24 @@
+version: '3.7'
+services:
+  mysql:
+    image: mysql
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=mypass
+      - MYSQL_DATABASE=java47
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql:/var/lib/mysql 
+  backend:
+    container_name: backend
+    build:
+      context: .
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/opt/app
+    depends_on:
+      - mysql
+volumes:
+  mysql: 

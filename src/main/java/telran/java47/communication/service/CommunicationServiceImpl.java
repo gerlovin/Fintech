@@ -46,6 +46,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -65,19 +66,8 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 	@Override
 	public TimeHistoryLimitsForIndexDto findTimeLimitsById(String id) throws Exception, InterruptedException {
-//		HttpRequest request = HttpRequest.newBuilder()
-//				.uri(URI.create("https://api.twelvedata.com/earliest_timestamp?symbol=" + id + "&interval=1day&outputsize=30&apikey=" + API_KEY))
-//				.header("X-RapidAPI-Key", API_KEY)
-//				.header("X-RapidAPI-Host", BASE_URL)
-//				.method("GET", HttpRequest.BodyPublishers.noBody())
-//				.build();
-//		HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-//		System.out.println(response.body());
 		URI uri = URI.create("https://api.twelvedata.com/earliest_timestamp?symbol=" + id
 				+ "&interval=1day&outputsize=30&apikey=" + API_KEY);
-//		HttpHeaders headers = new HttpHeaders();
-//		headers.add("X-RapidAPI-Key", "324c69fb60msh93f7cf5cb241a94p12eb0bjsn5863365f3ef9");
-//	    headers.add("X-RapidAPI-Host", "twelve-data1.p.rapidapi.com");
 		RequestEntity<String> request = new RequestEntity<>(HttpMethod.GET, uri);
 		ResponseEntity<EarlestTimestampDto> response = restTemplate.exchange(request, EarlestTimestampDto.class);
 		TimeHistoryLimitsForIndexDto result = new TimeHistoryLimitsForIndexDto();
@@ -85,33 +75,9 @@ public class CommunicationServiceImpl implements CommunicationService {
 		result.setToData(LocalDate.now());
 		result.setFromData(response.getBody().getDatetime());
 		return result;
-
 	}
 
-//	static RestTemplate restTemplate = new RestTemplate();
-//	static final String BASE_URL = "https://api.apilayer.com/fixer/convert"
-//	static final String API_KEY = "gHBm67EZiz0YuSFtzNLmM3VIUEDa74t6";
-//	
-//	public static void main(String[] args) throws URISyntaxException, IOException {
-//		
-//		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//		System.out.println("Enter currency from:");
-//		String from = br.readLine().trim();
-//		System.out.println("Enter currency to:");
-//		String to = br.readLine().trim();
-//		System.out.println("Enter sum:");
-//		double sum = Double.parseDouble(br.readLine().trim());
-//		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
-//				.queryParam("from", from)
-//				.queryParam("to", to)
-//				.queryParam("amount", sum);
-//		HttpHeaders headers = new HttpHeaders();
-//		headers.add("apikey", API_KEY);
-//		RequestEntity<String> request = new RequestEntity<>(headers, HttpMethod.GET, builder.build().toUri());
-//		ResponseEntity<RatesDto> response = restTemplate.exchange(request, RatesDto.class);	
-//		System.out.println("Date = " + response.getBody().getDate());
-//		System.out.println("Result = " + response.getBody().getResult());
-//	}
+
 	@Override
 	public String[] getAllIndexes() {
 		URI uri = URI.create("https://api.twelvedata.com/stocks?exchange=NASDAQ&apikey=" + API_KEY);
@@ -122,8 +88,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 	}
 	
 	@Override
-	public String[] getAllIndexesBD() {
-		
+	public String[] getAllIndexesBD() {		
 		return stockRepository.findDistinctByStockKeyName().stream().toArray(String[]::new);
 	}
 
@@ -340,66 +305,51 @@ public class CommunicationServiceImpl implements CommunicationService {
 	@Override
 //	public ParsedInfoDto parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData) {
 	public boolean parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData) {
-		HashMap<String, ParsedInfoDto> mapStocks = new HashMap<String, ParsedInfoDto>();
-		String symbols =parserRequestForTwelveData.getSource()[0];
+		HashMap<String, ParsedInfoDto> mapStocks = new HashMap<>();
+		String symbols = parserRequestForTwelveData.getSource()[0];
 		for (int i = 1; i <= parserRequestForTwelveData.getSource().length - 1; i++) {
 			symbols = symbols + "," + parserRequestForTwelveData.getSource()[i];
 		}
-//			prevStockDate = parserRequestForTwelveData.getToData();
-			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + "/time_series")
-					.queryParam("end_date", parserRequestForTwelveData.getToData())
-					.queryParam("start_date", parserRequestForTwelveData.getFromData())
-					.queryParam("interval", parserRequestForTwelveData.getType())
-					.queryParam("symbol", symbols)
-					.queryParam("apikey", API_KEY);
-			RequestEntity<String> request = new RequestEntity<>(HttpMethod.GET, builder.build().toUri());
-			System.out.println("source :" + symbols);
-			ResponseEntity<? extends HashMap> response = restTemplate.exchange(request, mapStocks.getClass());
-			System.out.println("response :" + response.getBody().toString());
-			mapStocks = response.getBody();
-			mapStocks.entrySet().stream()
-			                    .forEach(en -> Arrays.stream(en.getValue().getValues())
-			                    		                    .map(s -> new Stock(new StockKey(en.getKey(), s.getDatetime()), s.getOpen(),
-			                    									s.getHigh(), s.getLow(), s.getClose(), s.getClose(), s.getVolume(), true))
-			                    		    				.forEach(s -> stockRepository.save(s)
-			                    		                    )
-			                    );
-//			ListParsedInfoDto newData = response.getBody();
-//			newData.getMapStocks().entrySet();
-//			
-//			System.out.println(newData.getValues().toString());
-//			if (newData.getValues() != null) {
-//				System.out.println("In if");
-//				Arrays.stream(newData.getValues()).filter(s -> s != null)
-//						.map(s -> new Stock(new StockKey(newData.getMeta().getSymbol(), s.getDatetime()), s.getOpen(),
-//								s.getHigh(), s.getLow(), s.getClose(), s.getClose(), s.getVolume(), true))
-//						.forEach(s -> {
-//							System.out.println("in forEach");
-//							if (s.getStockKey().getDateStock().plusDays(1).isBefore(prevStockDate)) {
-//								System.out.println("in if");
-//								LocalDate currentStockDate = s.getStockKey().getDateStock();
-//								while (currentStockDate.isBefore(prevStockDate)) {
-//									System.out.println(prevStockDate + "prev in while");
-//									System.out.println(currentStockDate.plusDays(1) + "s + 1 in while");
-//									prevStockDate = prevStockDate.minusDays(1);
-//									s.setStockKey(new StockKey(newData.getMeta().getSymbol(), prevStockDate));
-//									if (currentStockDate.isEqual(prevStockDate)) {
-//										s.setWorkDayOrNot(true);
-//									} else
-//										s.setWorkDayOrNot(false);
-//									stockRepository.save(s);
-//
-//								}
-//							} else {
-//								stockRepository.save(s);
-//								prevStockDate = s.getStockKey().getDateStock();
-//								System.out.println(prevStockDate);
-//							}
-//						});
-//			}
-//		}
-////		return 
-
+		prevStockDate = parserRequestForTwelveData.getToData();
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL + "/time_series")
+				.queryParam("end_date", parserRequestForTwelveData.getToData())
+				.queryParam("start_date", parserRequestForTwelveData.getFromData())
+				.queryParam("interval", parserRequestForTwelveData.getType()).queryParam("symbol", symbols)
+				.queryParam("apikey", API_KEY);
+		RequestEntity<String> request = new RequestEntity<>(HttpMethod.GET, builder.build().toUri());
+		System.out.println("source :" + symbols);
+		ParameterizedTypeReference<HashMap<String, ParsedInfoDto>> responseType = new ParameterizedTypeReference<HashMap<String, ParsedInfoDto>>() {
+		};
+		ResponseEntity<HashMap<String, ParsedInfoDto>> response = restTemplate.exchange(request, responseType);
+		System.out.println("response :" + response.getBody().toString());
+		mapStocks = response.getBody();
+		mapStocks.entrySet().stream().forEach(en -> {
+			Arrays.stream(en.getValue().getValues())
+					.map(s -> new Stock(new StockKey(en.getKey().toUpperCase(), s.getDatetime()), s.getOpen(),
+							s.getHigh(), s.getLow(), s.getClose(), s.getClose(), s.getVolume(), true))
+					.forEach(s -> {
+						if (s.getStockKey().getDateStock().plusDays(1).isBefore(prevStockDate)) {
+							System.out.println("in if");
+							LocalDate currentStockDate = s.getStockKey().getDateStock();
+							while (currentStockDate.isBefore(prevStockDate)) {
+								System.out.println(prevStockDate + "prev in while");
+								System.out.println(currentStockDate.plusDays(1) + "s + 1 in while");
+								prevStockDate = prevStockDate.minusDays(1);
+								s.setStockKey(new StockKey(en.getKey().toUpperCase(), prevStockDate));
+								if (currentStockDate.isEqual(prevStockDate)) {
+									s.setWorkDayOrNot(true);
+								} else
+									s.setWorkDayOrNot(false);
+								stockRepository.save(s);
+							}
+						} else {
+							stockRepository.save(s);
+							prevStockDate = s.getStockKey().getDateStock();
+							System.out.println(prevStockDate);
+						}
+					});
+			prevStockDate = parserRequestForTwelveData.getToData();
+		});
 		return true;
 	}
 
