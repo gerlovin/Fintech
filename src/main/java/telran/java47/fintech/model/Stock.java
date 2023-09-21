@@ -29,7 +29,7 @@ public class Stock {
 	Double lowV;
 	Double closeV;
 	Double adjCloseV;
-	Integer volume;
+	Long volume;
 	Boolean workDayOrNot;
 
 }
