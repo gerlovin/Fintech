@@ -30,7 +30,7 @@ public class ScheduledTasks {
 			packageRepository.deleteAll(listNameAmounts);
 		}
 	}
-	@Scheduled(cron = "0 14 17 * * ?")
+	@Scheduled(cron = "0 14 10 * * ?")
 	public void LoadNewData() {
 		String[] indexes =communicationService.getAllIndexes();
 		String[] subIndexes = Arrays.copyOfRange(indexes, 10,12 );

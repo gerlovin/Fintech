@@ -305,6 +305,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 	@Override
 //	public ParsedInfoDto parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData) {
 	public boolean parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData) {
+		List<Stock> stockList = new ArrayList<>();
 		HashMap<String, ParsedInfoDto> mapStocks = new HashMap<>();
 		String symbols = parserRequestForTwelveData.getSource()[0];
 		for (int i = 1; i <= parserRequestForTwelveData.getSource().length - 1; i++) {
@@ -340,16 +341,17 @@ public class CommunicationServiceImpl implements CommunicationService {
 									s.setWorkDayOrNot(true);
 								} else
 									s.setWorkDayOrNot(false);
-								stockRepository.save(s);
+								stockList.add(s);
 							}
 						} else {
-							stockRepository.save(s);
+							stockList.add(s);
 							prevStockDate = s.getStockKey().getDateStock();
 							System.out.println(prevStockDate);
 						}
 					});
 			prevStockDate = parserRequestForTwelveData.getToData();
 		});
+		stockRepository.saveAll(stockList);
 		return true;
 	}
 

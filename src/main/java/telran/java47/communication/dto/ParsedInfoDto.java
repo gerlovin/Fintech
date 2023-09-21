@@ -1,7 +1,5 @@
 package telran.java47.communication.dto;
 
-import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ParsedInfoDto implements Serializable {
+public class ParsedInfoDto  {
 
 	MetaDto meta;
 	ValueDto[] values;

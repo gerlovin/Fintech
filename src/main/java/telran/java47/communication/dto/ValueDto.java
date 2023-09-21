@@ -12,14 +12,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ValueDto implements Serializable{
-	 /**
-	 * 
-	 */
-	private static final long serialVersionUID = 2852667557903492122L;
+public class ValueDto {
 	 LocalDate datetime;
      double close;
-     int volume;
+     long volume;
      double open;
      double high;
      double low;
