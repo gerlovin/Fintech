@@ -144,6 +144,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 		for (ValueCloseBeetwinDto vCDto : valuesReturnList) {
 			dateCur = vCDto.getFrom();
+		System.out.println(dateCur);
 			maxDate1 = vCDto.getTo();
 			while (!(dateCur.isAfter(maxDate1))) {
 
