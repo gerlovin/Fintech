@@ -2,6 +2,7 @@ package telran.java47.communication.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.mapping.Array;
@@ -29,9 +30,10 @@ public class ScheduledTasks {
 			packageRepository.deleteAll(listNameAmounts);
 		}
 	}
-	@Scheduled(cron = "0 56 21 * * ?")
+	@Scheduled(cron = "0 14 17 * * ?")
 	public void LoadNewData() {
-		String [] indexes =communicationService.getAllIndexes();
-		communicationService.parsing(new ParserRequestForTwelveDataDto(indexes, LocalDate.now().minusDays(2), LocalDate.now(), "1day"));				
+		String[] indexes =communicationService.getAllIndexes();
+		String[] subIndexes = Arrays.copyOfRange(indexes, 10,12 );
+		communicationService.parsing(new ParserRequestForTwelveDataDto(subIndexes, LocalDate.now().minusDays(2), LocalDate.now(), "1day"));				
 	}
 }
