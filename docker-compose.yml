@@ -10,6 +10,7 @@ services:
       - "3306:3306"
     volumes:
       - mysql:/var/lib/mysql 
+      - ./infra/dump.sql:/docker-entrypoint-initdb.d/dump.sql
   backend:
     container_name: backend
     build:
