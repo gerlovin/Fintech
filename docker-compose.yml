@@ -4,7 +4,7 @@ services:
     image: mysql
     container_name: mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=mypass
+      - MYSQL_ROOT_PASSWORD=1234
       - MYSQL_DATABASE=java47
     ports:
       - "3306:3306"
