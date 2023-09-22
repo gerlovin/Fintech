@@ -15,8 +15,6 @@ import lombok.ToString;
 @ToString
 public class UserAccount {
 	@Id
-	String login;
-	@Setter
 	String email;
 	@Setter
 	String password;
@@ -26,11 +24,11 @@ public class UserAccount {
 		roles = new HashSet<>();
 	}
 
-	public UserAccount(String login, String password, String email, String firstName, String lastName) {
+	public UserAccount( String email, String password) {
 		this();
-		this.login = login;
-		this.password = password;
 		this.email = email;
+		this.password = password;
+
 	}
 
 	public boolean addRole(String role) {
