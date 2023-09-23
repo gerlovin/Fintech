@@ -222,10 +222,9 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 	@Override
 	public String correlation(CorrelationDto correlationDto) {
-		return stockRepository
-				.correlationCalc(correlationDto.getIndices()[0].toUpperCase(),
-						correlationDto.getIndices()[1].toUpperCase(), correlationDto.getFrom(), correlationDto.getTo())
-				.toString();
+		System.out.println("555555555!!!!!!!");
+		return  stockRepository.correlationCalc(correlationDto.getIndices()[0].trim(), 
+				correlationDto.getIndices()[1].trim(), correlationDto.getFrom(), correlationDto.getTo()).toString();		
 	}
 
 	@Override
