@@ -30,11 +30,10 @@ public class ScheduledTasks {
 			packageRepository.deleteAll(listNameAmounts);
 		}
 	}
-	@Scheduled(cron = "0 03 22  * * ?")
-	public void loadNewData() {
-		System.out.println("--------In autoLoader------------");
-		String[] indices = symbolLoader.indices;
-		String[] subIndices = Arrays.copyOfRange(indices, 1,2 );
+	@Scheduled(cron = "0 14 10 * * ?")
+	public void LoadNewData() {
+		String[] indices =communicationService.getAllIndices();
+		String[] subIndices = Arrays.copyOfRange(indices, 10,12 );
 		communicationService.parsing(new ParserRequestForTwelveDataDto(subIndices, LocalDate.now().minusDays(2), LocalDate.now(), "1day"));				
 	}
 }
