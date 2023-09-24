@@ -1,5 +1,6 @@
 package telran.java47.communication.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public interface CommunicationService {
 	TimeHistoryLimitsForIndexDto findTimeLimitsByIdInDB(String id);
 	
 	String testReq(String name);
-	boolean parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData);
+	LocalDate parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData);
 
 	
 }

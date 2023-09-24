@@ -11,15 +11,30 @@ services:
     volumes:
       - mysql:/var/lib/mysql 
       - ./infra/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+  mongodb: 
+    image: mongo  
+    container_name: mongodb
+    ports:
+      - 27017:27017 
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: sergey
+      MONGO_INITDB_ROOT_PASSWORD: masterkey
+      MONGO_INITDB_DATABASE: fintechUsers
+    volumes:
+      - mongo_volume:/data/db 
   backend:
     container_name: backend
-    build:
-      context: .
+    build:      
+      context: . 
     ports:
       - 8080:8080
+    command: ["./mvnw", "spring-boot:run"]
+    environment:
+      SPRING_DATA_MONGODB_URI:  mongodb://sergey:masterkey@mongodb:27017/fintechUsers
     volumes:
       - .:/opt/app
     depends_on:
       - mysql
 volumes:
-  mysql: 
+  mysql:
+  mongo_volume: 
