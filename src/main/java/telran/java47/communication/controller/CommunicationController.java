@@ -1,5 +1,6 @@
 package telran.java47.communication.controller;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import telran.java47.communication.dto.PeriodBeetwinIfoDto;
 import telran.java47.communication.dto.TimeHistoryLimitsForIndexDto;
 import telran.java47.communication.dto.ValueCloseBeetwinDto;
 import telran.java47.communication.service.CommunicationService;
+import telran.java47.communication.service.SymbolLoader;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,6 +32,7 @@ import telran.java47.communication.service.CommunicationService;
 public class CommunicationController {
 
 	final CommunicationService communicationService;
+	final SymbolLoader symbolLoader;
 	
 	@GetMapping("/parser/{id}")
 	@CrossOrigin(origins = "*") 
@@ -106,7 +109,7 @@ public class CommunicationController {
 	}
 	@PostMapping("/parser")
 	@CrossOrigin(origins = "*") 
-	public boolean parsing(@RequestBody ParserRequestForTwelveDataDto parserRequestForTwelveData) {
+	public LocalDate parsing(@RequestBody ParserRequestForTwelveDataDto parserRequestForTwelveData) {
 		return communicationService.parsing(parserRequestForTwelveData);
 	}
 	
@@ -121,5 +124,17 @@ public class CommunicationController {
 	public List<PeriodBeetwinIfoDto> periodBeetwin(@RequestBody PeriodBeetwinDto periodBeetwinDto) {
 		//DONE
 		return communicationService.periodBeetwin(periodBeetwinDto);
+	}
+	
+
+	@GetMapping("/communication/fill-in")
+	@CrossOrigin(origins = "*") 
+	public boolean fill_in() {
+		try {
+			return symbolLoader.loader();
+		} catch (Exception e) {			
+			e.printStackTrace();
+			return false;
+		}
 	}
 }

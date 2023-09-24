@@ -61,10 +61,11 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 	@Override
 	public List<UserInfoDto> getAllUsers() {
-		
-		return userAccountRepository.findAll().stream()
-				.map(u -> modelMapper.map(u, UserInfoDto.class))
-				.toList();
+//		
+//		return userAccountRepository.findAll().stream()
+//				.map(u -> modelMapper.map(u, UserInfoDto.class))
+//				.toList();
+		return null;
 	}
 
 	@Override

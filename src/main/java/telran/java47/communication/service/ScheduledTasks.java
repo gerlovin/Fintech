@@ -32,8 +32,8 @@ public class ScheduledTasks {
 	}
 	@Scheduled(cron = "0 14 10 * * ?")
 	public void loadNewData() {
-		String[] indexes =communicationService.getAllIndexes();
-		String[] subIndexes = Arrays.copyOfRange(indexes, 10,12 );
-		communicationService.parsing(new ParserRequestForTwelveDataDto(subIndexes, LocalDate.now().minusDays(2), LocalDate.now(), "1day"));				
+		String[] indices =communicationService.getAllIndices();
+		String[] subIndices = Arrays.copyOfRange(indices, 10,12 );
+		communicationService.parsing(new ParserRequestForTwelveDataDto(subIndices, LocalDate.now().minusDays(2), LocalDate.now(), "1day"));				
 	}
 }
