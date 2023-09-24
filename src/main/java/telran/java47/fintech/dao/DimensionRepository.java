@@ -14,6 +14,6 @@ public interface DimensionRepository extends JpaRepository<DimensionProcedure, L
 	
 	@Transactional
 	@Procedure("IncomeWithAPY")
-	ArrayList<DimensionProcedure> incomeWithAPI(String name, String typePeriod, int lenghtPeriod, double lenghtPeriodYears, LocalDate dateFrom, LocalDate dateTo);
+	ArrayList<DimensionProcedure> incomeWithAPI(String name, String typePeriod, int lenghtPeriod, Double lenghtPeriodYears, LocalDate dateFrom, LocalDate dateTo);
 
 }

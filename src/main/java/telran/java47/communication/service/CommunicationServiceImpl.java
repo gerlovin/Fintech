@@ -195,11 +195,10 @@ public class CommunicationServiceImpl implements CommunicationService {
 	@Override
 	@Transactional
 	public ApyIncomDto calcIncomeApy(PeriodBeetwinDto periodBeetwinDto) {
-		double periodYears = getPeriodInYears(periodBeetwinDto.getType().toUpperCase(), periodBeetwinDto.getQuantity());
-		ArrayList<DimensionProcedure> dimensionList = dimensionRepository.incomeWithAPI(
-				periodBeetwinDto.getIndices()[0], periodBeetwinDto.getType(), periodBeetwinDto.getQuantity(),
-				periodYears, periodBeetwinDto.getFrom(), periodBeetwinDto.getTo());
-
+		double periodYears = Double.valueOf(getPeriodInYears(periodBeetwinDto.getType().toUpperCase(), periodBeetwinDto.getQuantity() + 0.0));
+		System.out.println("periodYears: " + periodYears);
+		ArrayList<DimensionProcedure>  dimensionList = dimensionRepository.incomeWithAPI(periodBeetwinDto.getIndices()[0], periodBeetwinDto.getType(), periodBeetwinDto.getQuantity(), periodYears, periodBeetwinDto.getFrom(), periodBeetwinDto.getTo());
+		System.out.println("dimensionList: " + dimensionList.size());
 		IncomeApyDto minApyDto = createIncomeApyDtoFromDimensionProcedure(dimensionList.get(0));
 		IncomeApyDto maxApyDto = createIncomeApyDtoFromDimensionProcedure(dimensionList.get(1));
 		String typeS = String.valueOf(periodBeetwinDto.getQuantity()) + ' ' + periodBeetwinDto.getType();
@@ -222,7 +221,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 	@Override
 	public String correlation(CorrelationDto correlationDto) {
-		System.out.println("555555555!!!!!!!");
+
 		return  stockRepository.correlationCalc(correlationDto.getIndices()[0].trim(), 
 				correlationDto.getIndices()[1].trim(), correlationDto.getFrom(), correlationDto.getTo()).toString();		
 	}
@@ -239,7 +238,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 		System.out.println(stocks.size());
 
 		String typeS = String.valueOf(periodBeetwinDto.getQuantity()) + ' ' + periodBeetwinDto.getType();
-		double yearsCount = getPeriodInYears(periodBeetwinDto.getType().toUpperCase(), periodBeetwinDto.getQuantity());
+		double yearsCount = getPeriodInYears(periodBeetwinDto.getType().toUpperCase(), periodBeetwinDto.getQuantity()+0.0);
 		System.out.println(yearsCount);
 		TemporalUnit temporalUnit = getPeriodUnit(periodBeetwinDto.getType().toUpperCase());
 
@@ -263,19 +262,21 @@ public class CommunicationServiceImpl implements CommunicationService {
 		return valuesReturnList;
 	}
 
-	private double getPeriodInYears(String periodString, int i) {
+	private double getPeriodInYears(String periodString, Double i) {
+
 		int daysInYear = LocalDate.of(LocalDate.now().getYear(), 1, 1).minusDays(1).getDayOfYear();
+
 		switch (periodString) {
 		case "DAYS":
-			return i / daysInYear;
+			return Double.valueOf(i/(daysInYear + 0.0));
 		case "WEEKS":
-			return i / (daysInYear / 7);
+			return Double.valueOf(i/(daysInYear/7.0));
 		case "MONTHS":
-			return i / 12;
+			return Double.valueOf(i/12.0);
 		case "YEARS":
-			return i;
+			return Double.valueOf(i);
 		default:
-			return 0;
+			return Double.valueOf(0.0);
 		}
 	}
 
