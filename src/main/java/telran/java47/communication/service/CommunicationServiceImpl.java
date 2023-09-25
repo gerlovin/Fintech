@@ -370,16 +370,15 @@ public class CommunicationServiceImpl implements CommunicationService {
 								System.out.println("in if");
 								LocalDate currentStockDate = s.getStockKey().getDateStock();
 								while (currentStockDate.isBefore(prevStockDate)) {
-									System.out.println(prevStockDate + "prev in while");
-									System.out.println(currentStockDate.plusDays(1) + "s + 1 in while");
 									prevStockDate = prevStockDate.minusDays(1);
-									s.setStockKey(new StockKey(en.getKey().toUpperCase(), prevStockDate));
+									Stock stock = new Stock(new StockKey(en.getKey().toUpperCase(), prevStockDate),
+											s.getOpenV(), s.getHighV(), s.getLowV(), s.getCloseV(), s.getCloseV(), s.getVolume(), true);
 									if (currentStockDate.isEqual(prevStockDate)) {
-										s.setWorkDayOrNot(true);
+										stock.setWorkDayOrNot(true);
 									} else
-										s.setWorkDayOrNot(false);
-									stockList.add(s);
-								}
+										stock.setWorkDayOrNot(false);
+									stockList.add(stock);
+								}														
 							} else {
 								stockList.add(s);
 								prevStockDate = s.getStockKey().getDateStock();
