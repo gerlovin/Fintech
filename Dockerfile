@@ -1,5 +1,7 @@
 
-FROM adoptopenjdk/openjdk11:alpine-jre
+#FROM adoptopenjdk/openjdk11:alpine-jre
+FROM eclipse-temurin:11-jre-alpine
+
 
 # Refer to Maven build -> finalName
 ARG JAR_FILE=target/spring-boot-web.jar
@@ -15,6 +17,9 @@ COPY .mvn  /opt/app/.mvn
 # java -jar /opt/app/app.jar
 # ENTRYPOINT ["java","-jar","app.jar"]
 RUN ./mvnw dependency:go-offline
+#RUN mvn package -DskipTests
+
+
 
 # Используйте официальный образ Maven
 #FROM maven:3.6.3-jdk-11

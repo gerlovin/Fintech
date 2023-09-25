@@ -31,7 +31,7 @@ services:
         - MAVEN_OPTS=-DskipTests
     ports:
       - 8080:8080
-    command: ["./mvnw", "spring-boot:run"]
+    # command: ["./mvnw", "spring-boot:run"]
     environment:
       SPRING_DATA_MONGODB_URI:  mongodb://sergey:masterkey@mongodb:27017/fintechUsers
     volumes:
