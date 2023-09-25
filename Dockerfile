@@ -18,6 +18,7 @@ COPY .mvn  /opt/app/.mvn
 
 
 RUN ./mvnw dependency:go-offline
+#RUN mvn package -DskipTests
 
 # Установка пакета ntp
 #RUN apk update && apk add chrony
