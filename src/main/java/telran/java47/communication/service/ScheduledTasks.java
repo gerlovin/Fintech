@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import org.hibernate.mapping.Array;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +18,7 @@ import telran.java47.fintech.model.NameAmount;
 public class ScheduledTasks {
 	final PackageRepository packageRepository;
 	final CommunicationService communicationService;
+	final SymbolLoader symbolLoader;
 
 	//(cron = "0 39 10 * * ?") // 10:39 am
 	
@@ -30,10 +30,11 @@ public class ScheduledTasks {
 			packageRepository.deleteAll(listNameAmounts);
 		}
 	}
-	@Scheduled(cron = "0 14 10 * * ?")
+	@Scheduled(cron = "0 03 22  * * ?")
 	public void loadNewData() {
-		String[] indices =communicationService.getAllIndices();
-		String[] subIndices = Arrays.copyOfRange(indices, 10,12 );
+		System.out.println("--------In autoLoader------------");
+		String[] indices = symbolLoader.indices;
+		String[] subIndices = Arrays.copyOfRange(indices, 1,2 );
 		communicationService.parsing(new ParserRequestForTwelveDataDto(subIndices, LocalDate.now().minusDays(2), LocalDate.now(), "1day"));				
 	}
 }
