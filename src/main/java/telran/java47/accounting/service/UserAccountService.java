@@ -14,13 +14,11 @@ public interface UserAccountService {
 
 	UserDto getUser(String login);
 
-	UserDto removeUser(String login);
+	UserDto removeUser(String email);
 
-	//UserDto updateUser(String login, UserEditDto userEditDto);
+	UserDto changeRolesList(String email, String role, boolean isAddRole);
 
-	//RolesDto changeRolesList(String login, String role, boolean isAddRole);
-
-	void changePassword(String login, String newPassword);
+	void changePassword(String email, String newPassword);
 	
 	List<UserInfoDto> getAllUsers();
 	
