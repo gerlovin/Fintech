@@ -138,7 +138,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 				.map(s -> new ValueCloseBeetwinDto(minDate, maxDate, source, typeS, s.getStockKey().getDateStock(),
 						s.getStockKey().getDateStock().plus(periodBeetwinDto.getQuantity(), temporalUnit),
 						s.getCloseV(), 0, 0, new ArrayList<Double>()))
-				.filter(v -> v.getTo().isBefore(v.getMaxDate().plusDays(1)))
+				.filter(v -> v.getMaxDate().isBefore(v.getTo().plusDays(1)))
 				.collect(Collectors.toCollection(ArrayList::new));
 
 		Map<LocalDate, Double> mapClosesMap = stocks.stream()
@@ -148,9 +148,8 @@ public class CommunicationServiceImpl implements CommunicationService {
 		LocalDate dateCur;
 
 		for (ValueCloseBeetwinDto vCDto : valuesReturnList) {
-			dateCur = vCDto.getFrom();
-			System.out.println(dateCur);
-			maxDate1 = vCDto.getTo();
+			dateCur = vCDto.getMinDate();
+			maxDate1 = vCDto.getMaxDate();
 			while (!(dateCur.isAfter(maxDate1))) {
 
 				vCDto.getListClose().add(mapClosesMap.get(dateCur));
@@ -160,6 +159,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 				}
 				dateCur = dateCur.plusDays(1);
 			}
+			
 		}
 
 		return valuesReturnList;

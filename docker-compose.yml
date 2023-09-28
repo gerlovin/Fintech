@@ -13,14 +13,16 @@ services:
       - ./infra/my_dump.sql:/docker-entrypoint-initdb.d/my_dump.sql
   mongodb: 
     image: mongo  
-    container_name: mongodbfintech
+    container_name: mongodbFintech
     ports:
       - 27017:27017 
     command: mongod --noauth
     environment:
+      MONGO_INITDB_ROOT_USERNAME: anna
+      MONGO_INITDB_ROOT_PASSWORD: 1234
       MONGO_INITDB_DATABASE: fintechUsers
     volumes:
-      - mongo_volume:/data/db 
+      - mongofintech_volume:/data/db 
   backend:
     container_name: backend
     build:
@@ -32,13 +34,11 @@ services:
       - 8080:8080
     command: ["./mvnw", "spring-boot:run"]
     environment:
-      - TZ=UTC  
-      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/fintechUsers?authSource=admin
-      - BUILDX_GIT_INFO=false
+      SPRING_DATA_MONGODB_URI:  mongodb://anna:1234@mongodb:27017/fintechUsers
     volumes:
       - .:/opt/app
     depends_on:
       - mysql
 volumes:
   mysql:
-  mongo_volume: 
+  mongofintech_volume: 

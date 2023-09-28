@@ -30,9 +30,15 @@ public class ScheduledTasks {
 			packageRepository.deleteAll(listNameAmounts);
 		}
 	}
+<<<<<<< main
 	@Scheduled(cron = "0 43 10 * * ?")
 	public void LoadNewData() {
 		System.out.println("In loader");
+=======
+	@Scheduled(cron = "0 54 10 * * ?")
+	public void LoadNewData() {
+		System.out.println("Taimer");
+>>>>>>> fixed listClose in Get All Value Close Between
 		String[] indices =communicationService.getAllIndices();
 		String[] subIndices = Arrays.copyOfRange(indices, 10,12 );
 		communicationService.parsing(new ParserRequestForTwelveDataDto(subIndices, LocalDate.now().minusDays(2), LocalDate.now(), "1day"));				
