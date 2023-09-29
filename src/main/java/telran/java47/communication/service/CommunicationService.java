@@ -8,6 +8,7 @@ import telran.java47.communication.dto.AllApyIncomeDto;
 import telran.java47.communication.dto.ApyIncomDto;
 import telran.java47.communication.dto.CalcSumPackageDto;
 import telran.java47.communication.dto.CorrelationDto;
+import telran.java47.communication.dto.GraphDto;
 import telran.java47.communication.dto.InfoDto;
 import telran.java47.communication.dto.IrrIncomeDto;
 import telran.java47.communication.dto.ParserRequestForTwelveDataDto;
@@ -48,6 +49,8 @@ public interface CommunicationService {
 	
 	String testReq(String name);
 	LocalDate parsing(ParserRequestForTwelveDataDto parserRequestForTwelveData);
+	
+	ArrayList<GraphDto> graphInfo(TimeHistoryLimitsForIndexDto timeHistoryLimitsForIndexDto);
 
 	InfoDto[] info();
 

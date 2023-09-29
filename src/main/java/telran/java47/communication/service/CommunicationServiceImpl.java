@@ -19,6 +19,7 @@ import telran.java47.communication.dto.ApyIncomDto;
 import telran.java47.communication.dto.CalcSumPackageDto;
 import telran.java47.communication.dto.CorrelationDto;
 import telran.java47.communication.dto.EarlestTimestampDto;
+import telran.java47.communication.dto.GraphDto;
 import telran.java47.communication.dto.IncomeApyDto;
 import telran.java47.communication.dto.InfoDto;
 import telran.java47.communication.dto.IrrIncomeDto;
@@ -44,6 +45,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 
+import org.aspectj.weaver.NewConstructorTypeMunger;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -408,6 +410,19 @@ public class CommunicationServiceImpl implements CommunicationService {
 		listNameAmounts.stream().forEach(s -> System.out.println(s));
 		System.out.println(listNameAmounts.size());
 		return null;
+	}
+
+	@Override
+	public ArrayList<GraphDto> graphInfo(TimeHistoryLimitsForIndexDto timeHistoryLimitsForIndexDto) {
+
+		List<Stock> stocks = stockRepository.findByStockKeyNameIgnoreCaseStockKeyDateStockBetween(timeHistoryLimitsForIndexDto.getSource(), 
+				timeHistoryLimitsForIndexDto.getFromData(),
+				timeHistoryLimitsForIndexDto.getToData());
+		return stocks.stream()
+			.map(s -> new GraphDto(s.getStockKey().getName(), s.getStockKey().getDateStock(), 
+					s.getOpenV(), s.getHighV(), s.getLowV(), s.getCloseV(), 
+					s.getAdjCloseV(), s.getVolume(), s.getWorkDayOrNot()))
+			.collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	@Override
