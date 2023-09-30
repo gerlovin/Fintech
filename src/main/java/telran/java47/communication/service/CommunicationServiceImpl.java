@@ -20,6 +20,7 @@ import telran.java47.communication.dto.CalcSumPackageDto;
 import telran.java47.communication.dto.CorrelationDto;
 import telran.java47.communication.dto.EarlestTimestampDto;
 import telran.java47.communication.dto.IncomeApyDto;
+import telran.java47.communication.dto.InfoDto;
 import telran.java47.communication.dto.IrrIncomeDto;
 import telran.java47.communication.dto.ParsedInfoDto;
 import telran.java47.communication.dto.ParserRequestForTwelveDataDto;
@@ -407,6 +408,24 @@ public class CommunicationServiceImpl implements CommunicationService {
 		listNameAmounts.stream().forEach(s -> System.out.println(s));
 		System.out.println(listNameAmounts.size());
 		return null;
+	}
+
+	@Override
+	public InfoDto[] info() {
+		URI uri = URI.create("https://api.twelvedata.com/stocks?exchange=NASDAQ&apikey=" + API_KEY);
+		RequestEntity<String> request = new RequestEntity<>(HttpMethod.GET, uri);
+		HashMap<String, LocalDate> startDateInfo = new HashMap<>();
+		stockRepository.startDate().stream().forEach(sd -> startDateInfo.put(sd.getName(), sd.getDateStock()));
+		ResponseEntity<TwelveDataSymbolListDto> response = restTemplate.exchange(request,
+				TwelveDataSymbolListDto.class);
+		return Arrays.stream(response.getBody().getData()).map(s -> new InfoDto(s.getSymbol(), s.getName(), s.getExchange(), getStartDateInfo(s.getSymbol(), startDateInfo))).toArray(InfoDto[]::new);
+	
+	}
+
+	private LocalDate getStartDateInfo(String symbol, HashMap<String, LocalDate> info) {
+		if (info.containsKey(symbol)) 
+			return info.get(symbol);
+		return LocalDate.now();
 	}
 
 }

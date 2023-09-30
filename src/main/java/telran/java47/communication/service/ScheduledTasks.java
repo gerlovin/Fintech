@@ -30,10 +30,18 @@ public class ScheduledTasks {
 			packageRepository.deleteAll(listNameAmounts);
 		}
 	}
-	@Scheduled(cron = "0 14 10 * * ?")
+	@Scheduled(cron = "0 43 10 * * ?")
 	public void LoadNewData() {
+		System.out.println("In loader");
 		String[] indices =communicationService.getAllIndices();
 		String[] subIndices = Arrays.copyOfRange(indices, 10,12 );
 		communicationService.parsing(new ParserRequestForTwelveDataDto(subIndices, LocalDate.now().minusDays(2), LocalDate.now(), "1day"));				
 	}
+	@Scheduled(cron = "0 20 10 * * ?")
+	public void cronTest() {
+		System.out.println("************************In test******************************************");
+	}
 }
+
+
+

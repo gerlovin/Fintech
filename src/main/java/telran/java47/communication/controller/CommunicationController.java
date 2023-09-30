@@ -17,6 +17,7 @@ import telran.java47.communication.dto.AllApyIncomeDto;
 import telran.java47.communication.dto.ApyIncomDto;
 import telran.java47.communication.dto.CalcSumPackageDto;
 import telran.java47.communication.dto.CorrelationDto;
+import telran.java47.communication.dto.InfoDto;
 import telran.java47.communication.dto.IrrIncomeDto;
 import telran.java47.communication.dto.ParserRequestForTwelveDataDto;
 import telran.java47.communication.dto.PeriodBeetwinDto;
@@ -136,5 +137,11 @@ public class CommunicationController {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	@GetMapping("/communication/info")
+	@CrossOrigin(origins = "*") 
+	public InfoDto[] info() {
+		return communicationService.info();
 	}
 }

@@ -1,5 +1,6 @@
 package telran.java47.accounting.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -63,10 +64,11 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 	@Override
 	public List<UserInfoDto> getAllUsers() {
-
-		return userAccountRepository.findAll().stream()
+		List<UserInfoDto> result = new ArrayList<>();
+		userAccountRepository.findAll().stream()
 				.map(u -> modelMapper.map(u, UserInfoDto.class))
-				.toList();
+				.forEach(u -> result.add(u));
+				return result;
 	}
 
 	@Override

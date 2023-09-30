@@ -2,11 +2,11 @@ package telran.java47.communication.service;
 
 import java.time.LocalDate;
 import java.util.HashMap;
-
+import org.quartz.*;
 import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import telran.java47.communication.dto.ParserRequestForTwelveDataDto;
+import telran.java47.quartz.NightLoader;
 
 @Service
 @RequiredArgsConstructor
@@ -15,10 +15,12 @@ public class SymbolLoader {
 	public HashMap<String, String> topIndices = new HashMap<>();
 	boolean flag = true;
 	String[] indices;
+
 	public boolean loader() throws Exception, Exception {
 		topIndices.put("AAPL", "Apple Inc.D");
 		topIndices.put("MSFT", "Microsoft CorporationD");
 		topIndices.put("GOOG", "Alphabet Inc.D");
+		topIndices.put("GOOGL", "Alphabet Inc.D");
 		topIndices.put("AMZN", "Amazon.com, Inc.D");
 		topIndices.put("NVDA", "NVIDIA CorporationD");
 		topIndices.put("TSLA", "Tesla, Inc.D");
@@ -56,7 +58,6 @@ public class SymbolLoader {
 		topIndices.put("NKY", "Nikkei 225 Index");
 		topIndices.put("UKX", "FTSE 100");
 		topIndices.put("GOLD", "Gold");
-		
 
 		LocalDate from;
 		LocalDate to;
@@ -66,9 +67,10 @@ public class SymbolLoader {
 				from = communicationService.findTimeLimitsById(index).getFromData();
 				to = LocalDate.now();
 				while (to.isAfter(from))
-					to = communicationService.parsing(new ParserRequestForTwelveDataDto(new String[] { index }, from, to, "1day"));				
-				    Thread.sleep(16000);
-				    System.out.println("Timeout");
+					to = communicationService
+							.parsing(new ParserRequestForTwelveDataDto(new String[] { index }, from, to, "1day"));
+				Thread.sleep(16000);
+				System.out.println("Timeout");
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				System.out.println("цикл загрузки прерван.");
@@ -77,6 +79,23 @@ public class SymbolLoader {
 			System.out.println("цикл загрузки завершен.");
 		}
 		return flag;
+	}
+
+	public void scheduleMyJobWithRepeatCount(Scheduler scheduler, int repeatCount) throws SchedulerException {
+		JobDetail jobDetail = JobBuilder.newJob(NightLoader.class)
+				                        .withIdentity("myJob", "group1")
+				                        .build();
+
+		SimpleTrigger trigger = TriggerBuilder.newTrigger()
+				                              .withIdentity("myTrigger", "group1")
+				                              .startNow()
+				                              .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+				                                                                 .withIntervalInSeconds(60)
+				                                                                 .withRepeatCount(repeatCount - 1)
+				                                            )
+									          .build();
+
+		scheduler.scheduleJob(jobDetail, trigger);
 	}
 
 }

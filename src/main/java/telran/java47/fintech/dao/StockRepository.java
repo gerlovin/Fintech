@@ -38,4 +38,17 @@ public interface StockRepository extends JpaRepository<Stock, StockKey> {
 
 	@Query("Select DISTINCT s.stockKey.name from Stock s")
 	List<String> findDistinctByStockKeyName();
+	
+//	@Query("SELECT s.stockkey.name, MIN(s.stockKey.dateStock) FROM Stock s GROUP BY s.stockkey.name HAVING COUNT(*) > 1")
+	@Query("select new telran.java47.fintech.model.StockKey(s.stockKey.name, MIN(s.stockKey.dateStock)) from Stock s group by s.stockKey.name")
+	List<StockKey> startDate();
 }
+//SELECT
+//name,
+//MIN(date_stock) AS min_second_column
+//FROM
+//java47.stocks
+//GROUP BY
+//name 
+//HAVING
+//COUNT(*) > 1;

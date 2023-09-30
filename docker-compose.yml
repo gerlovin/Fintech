@@ -10,15 +10,14 @@ services:
       - "3306:3306"
     volumes:
       - mysql:/var/lib/mysql 
-      - ./infra/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+      - ./infra/my_dump.sql:/docker-entrypoint-initdb.d/my_dump.sql
   mongodb: 
     image: mongo  
-    container_name: mongodb
+    container_name: mongodbfintech
     ports:
       - 27017:27017 
+    command: mongod --noauth
     environment:
-      MONGO_INITDB_ROOT_USERNAME: sergey
-      MONGO_INITDB_ROOT_PASSWORD: masterkey
       MONGO_INITDB_DATABASE: fintechUsers
     volumes:
       - mongo_volume:/data/db 
@@ -31,9 +30,11 @@ services:
         - MAVEN_OPTS=-DskipTests
     ports:
       - 8080:8080
-    # command: ["./mvnw", "spring-boot:run"]
+    command: ["./mvnw", "spring-boot:run"]
     environment:
-      SPRING_DATA_MONGODB_URI:  mongodb://sergey:masterkey@mongodb:27017/fintechUsers
+      - TZ=UTC  
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/fintechUsers?authSource=admin
+      - BUILDX_GIT_INFO=false
     volumes:
       - .:/opt/app
     depends_on:
