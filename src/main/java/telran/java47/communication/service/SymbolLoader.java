@@ -64,7 +64,7 @@ public class SymbolLoader {
 		indices = topIndices.keySet().toArray(new String[0]);
 		for (String index : indices) {
 			try {
-				from = communicationService.findTimeLimitsById(index).getFromData();
+				from = communicationService.findTimeLimitsById(index).getFromDate();
 				to = LocalDate.now();
 				while (to.isAfter(from))
 					to = communicationService
