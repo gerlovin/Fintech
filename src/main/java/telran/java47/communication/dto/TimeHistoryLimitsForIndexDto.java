@@ -14,6 +14,6 @@ import lombok.Setter;
 
 public class TimeHistoryLimitsForIndexDto {
 	String source;
-	LocalDate fromData;
-	LocalDate toData;
+	LocalDate fromDate;
+	LocalDate toDate;
 }

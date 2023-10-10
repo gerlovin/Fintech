@@ -71,12 +71,12 @@ public class CommunicationServiceImpl implements CommunicationService {
 		ResponseEntity<EarlestTimestampDto> response = restTemplate.exchange(request, EarlestTimestampDto.class);
 		TimeHistoryLimitsForIndexDto result = new TimeHistoryLimitsForIndexDto();
 		result.setSource(id);
-		result.setToData(LocalDate.now());
+		result.setToDate(LocalDate.now());
 		LocalDate datetime = response.getBody() != null ? response.getBody().getDatetime() : null;
 	    if (datetime != null) {
-	        result.setFromData(datetime);
+	        result.setFromDate(datetime);
 	    } else {
-	        result.setFromData(LocalDate.now()); 
+	        result.setFromDate(LocalDate.now()); 
 	    }
 		return result;
 	}
@@ -416,8 +416,8 @@ public class CommunicationServiceImpl implements CommunicationService {
 	public ArrayList<GraphDto> graphInfo(TimeHistoryLimitsForIndexDto timeHistoryLimitsForIndexDto) {
 
 		List<Stock> stocks = stockRepository.findByStockKeyNameIgnoreCaseStockKeyDateStockBetween(timeHistoryLimitsForIndexDto.getSource(), 
-				timeHistoryLimitsForIndexDto.getFromData(),
-				timeHistoryLimitsForIndexDto.getToData());
+				timeHistoryLimitsForIndexDto.getFromDate(),
+				timeHistoryLimitsForIndexDto.getToDate());
 		return stocks.stream()
 			.map(s -> new GraphDto(s.getStockKey().getName(), s.getStockKey().getDateStock(), 
 					s.getOpenV(), s.getHighV(), s.getLowV(), s.getCloseV(), 
