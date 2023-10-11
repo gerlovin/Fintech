@@ -1,6 +1,7 @@
 package telran.java47.communication.service;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
 import org.quartz.*;
 import org.springframework.stereotype.Service;
@@ -81,16 +82,18 @@ public class SymbolLoader {
 		return flag;
 	}
 
-	public void scheduleMyJobWithRepeatCount(Scheduler scheduler, int repeatCount) throws SchedulerException {
+	public static void scheduleMyJobWithRepeatCount(Scheduler scheduler, int repeatCount,String indicesString) throws SchedulerException {
+		
 		JobDetail jobDetail = JobBuilder.newJob(NightLoader.class)
 				                        .withIdentity("myJob", "group1")
+				                        .usingJobData("Indices", indicesString)
 				                        .build();
 
 		SimpleTrigger trigger = TriggerBuilder.newTrigger()
 				                              .withIdentity("myTrigger", "group1")
 				                              .startNow()
 				                              .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-				                                                                 .withIntervalInSeconds(60)
+				                                                                 .withIntervalInSeconds(16)
 				                                                                 .withRepeatCount(repeatCount - 1)
 				                                            )
 									          .build();

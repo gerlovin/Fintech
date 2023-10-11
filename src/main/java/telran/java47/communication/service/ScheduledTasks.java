@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +21,8 @@ public class ScheduledTasks {
 	final PackageRepository packageRepository;
 	final CommunicationService communicationService;
 	final SymbolLoader symbolLoader;
+	final Scheduler scheduler;
+	
 
 	//(cron = "0 39 10 * * ?") // 10:39 am
 	
@@ -30,24 +34,20 @@ public class ScheduledTasks {
 			packageRepository.deleteAll(listNameAmounts);
 		}
 	}
-<<<<<<< main
-	@Scheduled(cron = "0 43 10 * * ?")
-	public void LoadNewData() {
+	@Scheduled(cron = "0 53 19 * * ?")
+	public void LoadNewData() throws SchedulerException {
 		System.out.println("In loader");
-=======
-	@Scheduled(cron = "0 54 10 * * ?")
-	public void LoadNewData() {
-		System.out.println("Taimer");
->>>>>>> fixed listClose in Get All Value Close Between
-		String[] indices =communicationService.getAllIndices();
-		String[] subIndices = Arrays.copyOfRange(indices, 10,12 );
-		communicationService.parsing(new ParserRequestForTwelveDataDto(subIndices, LocalDate.now().minusDays(2), LocalDate.now(), "1day"));				
+		String[] indices = communicationService.getAllIndicesBD();
+		String indicesString = Arrays.stream(indices).reduce("",(s, n) -> n+s+",") ;
+		SymbolLoader.scheduleMyJobWithRepeatCount(scheduler, indices.length, indicesString);
+//		String[] indices =communicationService.getAllIndices();
+//		String[] subIndices = Arrays.copyOfRange(indices, 10,12 );
+//		communicationService.parsing(new ParserRequestForTwelveDataDto(subIndices, LocalDate.now().minusDays(2), LocalDate.now(), "1day"));				
 	}
-	@Scheduled(cron = "0 20 10 * * ?")
+	@Scheduled(cron = "0 51 19 * * ?")
 	public void cronTest() {
 		System.out.println("************************In test******************************************");
 	}
 }
 
-
-
+ 
