@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 //import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	final UserAccountRepository userAccountRepository;
 	final ModelMapper modelMapper;
 	final EmailService emailService;
-	//final PasswordEncoder passwordEncoder;
+	final PasswordEncoder passwordEncoder;
 	
 	@Override
 	public UserDto register(UserRegisterDto userRegisterDto) {
@@ -35,8 +36,8 @@ public class UserAccountServiceImpl implements UserAccountService {
 		}
 		
 		UserAccount userAccount = modelMapper.map(userRegisterDto, UserAccount.class);
-		//String password = passwordEncoder.encode(userRegisterDto.getPassword());
-		//userAccount.setPassword(password);
+		String password = passwordEncoder.encode(userRegisterDto.getPassword());
+		userAccount.setPassword(password);
 		userAccount.addRole(Roles.USER.toString());
 		userAccountRepository.save(userAccount);
 		userAccountRepository.findAll().forEach(e -> System.out.println(e));
