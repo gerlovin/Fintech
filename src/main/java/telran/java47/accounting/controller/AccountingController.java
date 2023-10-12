@@ -18,34 +18,34 @@ import telran.java47.accounting.dto.UserInfoDto;
 import telran.java47.accounting.dto.UserRegisterDto;
 import telran.java47.accounting.service.UserAccountService;
 
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
 public class AccountingController {
 	final UserAccountService userAccountService;
 	
 	@PostMapping("/account/register")
-	@CrossOrigin(origins = "*") 
+//	@CrossOrigin(origins = "*") 
 	public UserDto register(@RequestBody UserRegisterDto userRegisterDto) {
 		return userAccountService.register(userRegisterDto);
 		
 	}
 	
 	@DeleteMapping("/account/user/{email}")
-	@CrossOrigin(origins = "*") 
+//	@CrossOrigin(origins = "*") 
 	public UserDto removeUser(@PathVariable String email) {
 		return userAccountService.removeUser(email);
 	}
 	
 	
 	@GetMapping("/account/users")
-	@CrossOrigin(origins = "*") 
+//	@CrossOrigin(origins = "*") 
 	public List<UserInfoDto> getAllUsers() {
 		return userAccountService.getAllUsers();
 	}
 	
 	@GetMapping("/account/recovery/{email}")
-	@CrossOrigin(origins = "*") 
+//	@CrossOrigin(origins = "*") 
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	public void getRecovery(@PathVariable String email) {
 		System.out.println("we are here");
