@@ -15,7 +15,7 @@ public class SymbolLoader {
 	final CommunicationService communicationService;
 	public HashMap<String, String> topIndices = new HashMap<>();
 	boolean flag = true;
-	String[] indices;
+	public static String[] indices;
 
 	public boolean loader() throws Exception, Exception {
 		topIndices.put("AAPL", "Apple Inc.D");
@@ -48,7 +48,7 @@ public class SymbolLoader {
 		topIndices.put("ADBE", "Adobe Inc.D");
 		topIndices.put("BAC", "Bank of America CorporationD");
 		topIndices.put("CSCO", "Cisco Systems, Inc.D");
-		topIndices.put("ACN", "Accenture plcD");
+		topIndices.put("ACN", "Accenture plcD"); 
 		topIndices.put("CRM", "Salesforce, Inc.D");
 		topIndices.put("MCD", "McDonald's CorporationD");
 		topIndices.put("TMO", "Thermo Fisher Scientific IncD");
@@ -74,10 +74,10 @@ public class SymbolLoader {
 				System.out.println("Timeout");
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-				System.out.println("цикл загрузки прерван.");
+				System.out.println("load loop interrupted.");
 				flag = false;
 			}
-			System.out.println("цикл загрузки завершен.");
+			System.out.println("load loop finished.");
 		}
 		return flag;
 	}
@@ -86,7 +86,7 @@ public class SymbolLoader {
 		
 		JobDetail jobDetail = JobBuilder.newJob(NightLoader.class)
 				                        .withIdentity("myJob", "group1")
-				                        .usingJobData("Indices", indicesString)
+//				                        .usingJobData("Indices", indicesString)
 				                        .build();
 
 		SimpleTrigger trigger = TriggerBuilder.newTrigger()

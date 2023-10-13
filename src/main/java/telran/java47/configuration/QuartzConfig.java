@@ -13,6 +13,8 @@ public class QuartzConfig {
     @Bean
     public SchedulerFactoryBean schedulerFactoryBean() {
         SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
+        schedulerFactoryBean.setApplicationContextSchedulerContextKey("applicationContext");
+        
         return schedulerFactoryBean;
     }
 }
