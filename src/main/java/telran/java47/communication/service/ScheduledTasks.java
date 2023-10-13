@@ -34,12 +34,13 @@ public class ScheduledTasks {
 			packageRepository.deleteAll(listNameAmounts);
 		}
 	}
-	@Scheduled(cron = "0 53 19 * * ?")
+	@Scheduled(cron = "0 20 18 * * ?")
 	public void LoadNewData() throws SchedulerException {
 		System.out.println("In loader");
-		String[] indices = communicationService.getAllIndicesBD();
-		String indicesString = Arrays.stream(indices).reduce("",(s, n) -> n+s+",") ;
-		SymbolLoader.scheduleMyJobWithRepeatCount(scheduler, indices.length, indicesString);
+		SymbolLoader.indices = communicationService.getAllIndicesBD();
+		SymbolLoader.scheduleMyJobWithRepeatCount(scheduler, SymbolLoader.indices.length, "");
+//		String indicesString = Arrays.stream(indices).reduce("",(s, n) -> s+n+",") ;
+//		SymbolLoader.scheduleMyJobWithRepeatCount(scheduler, indices.length, indicesString);
 //		String[] indices =communicationService.getAllIndices();
 //		String[] subIndices = Arrays.copyOfRange(indices, 10,12 );
 //		communicationService.parsing(new ParserRequestForTwelveDataDto(subIndices, LocalDate.now().minusDays(2), LocalDate.now(), "1day"));				
