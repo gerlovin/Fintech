@@ -4,6 +4,9 @@ FROM eclipse-temurin:11-jre-alpine
 
 # Установка Git
 RUN apk add --no-cache git
+RUN apk add --update mysql-client && rm -rf /var/cache/apk/*
+RUN apk add mariadb-connector-c
+
 
 # Refer to Maven build -> finalName
 ARG JAR_FILE=target/spring-boot-web.jar

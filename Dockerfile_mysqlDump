@@ -1,0 +1,11 @@
+FROM ubuntu:latest
+
+RUN apt-get update && apt-get install -y mysql-client cron
+
+COPY dump-script.sh /dump-script.sh
+
+RUN chmod +x /dump-script.sh
+RUN apk add --no-cache git
+RUN echo "0 15 15 * * /dump-script.sh" 
+
+CMD ["cron", "-f"]

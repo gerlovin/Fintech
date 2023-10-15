@@ -34,7 +34,7 @@ public class ScheduledTasks {
 			packageRepository.deleteAll(listNameAmounts);
 		}
 	}
-	@Scheduled(cron = "0 20 18 * * ?")
+	@Scheduled(cron = "0 0 0 * * ?")
 	public void LoadNewData() throws SchedulerException {
 		System.out.println("In loader");
 		SymbolLoader.indices = communicationService.getAllIndicesBD();
@@ -45,9 +45,10 @@ public class ScheduledTasks {
 //		String[] subIndices = Arrays.copyOfRange(indices, 10,12 );
 //		communicationService.parsing(new ParserRequestForTwelveDataDto(subIndices, LocalDate.now().minusDays(2), LocalDate.now(), "1day"));				
 	}
-	@Scheduled(cron = "0 51 19 * * ?")
-	public void cronTest() {
+	@Scheduled(cron = "0 26 18 * * ?")
+	public void backUpDb() throws SchedulerException {
 		System.out.println("************************In test******************************************");
+		SymbolLoader.backUpScedule(scheduler);
 	}
 }
 

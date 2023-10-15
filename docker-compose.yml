@@ -10,7 +10,7 @@ services:
       - "3306:3306"
     volumes:
       - mysql:/var/lib/mysql 
-      - ./infra/my_dump.sql:/docker-entrypoint-initdb.d/my_dump.sql
+      - ./infra/backup_dump.sql:/docker-entrypoint-initdb.d/my_dump.sql
   mongodb: 
     image: mongo  
     container_name: mongodbFintech
@@ -38,6 +38,21 @@ services:
       - .:/opt/app
     depends_on:
       - mysql
+  dump-exporter:
+    container_name: mysqldump
+    build:
+      context: .
+      dockerfile: Dockerfile_mysqlDump
+    volumes:
+      - ./dump.sql:/dump.sql
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 1234
+      MYSQL_DATABASE: java47
+    depends_on:
+      - mysql
+    restart: always
 volumes:
   mysql:
   mongofintech_volume: 
