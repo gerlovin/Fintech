@@ -32,14 +32,9 @@ public class NightLoader implements Job {
 			ApplicationContext applicationContext = (ApplicationContext) context.getScheduler().getContext().get("applicationContext");
 //			String[] allBeanNames = applicationContext.getBeanDefinitionNames();
 //	        for(String beanName : allBeanNames) {
-//	            System.out.println(beanName);
+//	            System.out.println(beanName);        <<<<<PRINTING ALL BEAN'S NAMES>>>>>
 //	        }
 			communicationService = (CommunicationServiceImpl)applicationContext.getBean("communicationServiceImpl");
-//			System.out.println(applicationContext.getBean("communicationServiceImpl"));
-//			System.out.println(context.getJobDetail().getJobDataMap().getString("Indices"));
-//			String[] message = context.getJobDetail().getJobDataMap().getString("Indices").split(",");
-//			System.out.println(message[0]);
-//		    SymbolLoader.indices;
 			LocalDate toDate = communicationService.findTimeLimitsByIdInDB(SymbolLoader.indices[0]).getToDate();
 			communicationService.parsing(new ParserRequestForTwelveDataDto(new String[] {SymbolLoader.indices[0]}, toDate, LocalDate.now(), "1day"));	
 			shiftArrayLeft(SymbolLoader.indices, 1);

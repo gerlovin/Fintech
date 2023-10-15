@@ -7,6 +7,7 @@ import org.quartz.*;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import telran.java47.communication.dto.ParserRequestForTwelveDataDto;
+import telran.java47.quartz.BackupJob;
 import telran.java47.quartz.NightLoader;
 
 @Service
@@ -100,5 +101,20 @@ public class SymbolLoader {
 
 		scheduler.scheduleJob(jobDetail, trigger);
 	}
+	public static void backUpScedule(Scheduler scheduler) throws SchedulerException {
+
+        JobDetail job = JobBuilder.newJob(BackupJob.class).build();
+
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity("BackupTrigger", "group1")
+                .startNow()
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                        .withIntervalInHours(24)
+                        .repeatForever())
+                .build();
+
+        scheduler.start();
+        scheduler.scheduleJob(job, trigger);
+    }
 
 }
